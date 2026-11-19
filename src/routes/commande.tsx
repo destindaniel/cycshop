@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/use-auth';
 import { useCart } from '@/hooks/use-cart';
 import { computeTotals, formatPrice, productsQuery } from '@/lib/shop-data';
 import { pageHead } from '@/lib/storefront';
@@ -14,15 +13,13 @@ import { pageHead } from '@/lib/storefront';
 export const Route = createFileRoute('/commande')({ head: () => pageHead('Commande', 'Finalisez votre commande CYCY shop avec paiement à la livraison.'), component: Checkout });
 
 function Checkout() {
-  const { user, loading } = useAuth(); const cart = useCart(); const qc = useQueryClient();
+  const cart = useCart(); const qc = useQueryClient();
   const { data: products = [] } = useQuery(productsQuery);
   const [form, setForm] = useState({ name: '', phone: '', city: 'Brazzaville', district: '', line: '', notes: '', promo: '' });
   const [busy, setBusy] = useState(false); const [done, setDone] = useState<string | null>(null);
   const lines = cart.lines.flatMap((l) => { const p = products.find((x) => x.id === l.productId); return p ? [{ ...l, product: p, price: p.price }] : []; });
   const totals = computeTotals(lines);
-  if (done) return <main className="wrap"><div className="form-panel"><h1>Merci pour votre commande</h1><p className="text-sm text-muted-foreground leading-relaxed">Votre commande est enregistrée. Notre équipe vous contactera pour confirmer la livraison ; vous réglerez à la réception.</p><Button asChild className="mt-6"><Link to="/compte">Suivre mes commandes</Link></Button></div></main>;
-  if (loading) return <main className="wrap section"><p className="text-sm text-muted-foreground">Chargement…</p></main>;
-  if (!user) return <main className="wrap"><div className="form-panel"><h1>Connectez-vous</h1><p className="text-sm text-muted-foreground">Un compte client est nécessaire pour passer commande et la suivre.</p><Button asChild className="mt-6"><Link to="/compte">Se connecter ou créer un compte</Link></Button></div></main>;
+  if (done) return <main className="wrap"><div className="form-panel"><h1>Merci pour votre commande</h1><p className="text-sm text-muted-foreground leading-relaxed">Votre commande est enregistrée. Notre équipe vous contactera pour confirmer la livraison ; vous réglerez à la réception.</p><Button asChild className="mt-6"><Link to="/boutique">Retour à la boutique</Link></Button></div></main>;
   if (!lines.length) return <main className="wrap"><div className="form-panel"><h1>Panier vide</h1><Button asChild className="mt-6"><Link to="/boutique">Découvrir la boutique</Link></Button></div></main>;
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setForm({ ...form, [k]: e.target.value });
   const submit = async (e: React.FormEvent) => {

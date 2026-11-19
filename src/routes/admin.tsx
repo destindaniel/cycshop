@@ -11,7 +11,7 @@ export const Route = createFileRoute('/admin')({
     if (location.pathname === '/admin/login') return;
     const { data } = await supabase.auth.getUser();
     const isManager = data.user ? await checkManager(data.user.id) : false;
-    if (!canEnterAdmin({ hasSession: !!data.user, isManager })) throw redirect({ to: '/admin/login' });
+    if (!canEnterAdmin({ hasSession: !!data.user, isManager })) throw redirect({ to: '/compte' });
   },
   component: () => <Outlet />,
 });

@@ -17,3 +17,4 @@
 - [x] Espace d’administration réservé à la gestionnaire de la boutique : double contrôle (route + tableau de bord) et vérification réelle.
 - [ ] Ajout, modification, suppression de produits et commande test : à vérifier une fois le compte gestionnaire créé.
 - [ ] Paiement Mobile Money : à connecter plus tard ; paiement à la livraison actif.
+- [x] Espace « Mon compte » réservé à l'administratrice : connexion gestionnaire uniquement, commande sans compte client, favoris retirés.
