@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import { supabase } from '@/integrations/supabase/client';
 import { checkManager } from '@/hooks/use-auth';
+import { canEnterAdmin } from '@/lib/admin-access';
 
 // Session lives in browser storage, so the gate runs client-side; RLS enforces every write server-side.
 export const Route = createFileRoute('/admin')({
@@ -9,7 +10,8 @@ export const Route = createFileRoute('/admin')({
   beforeLoad: async ({ location }) => {
     if (location.pathname === '/admin/login') return;
     const { data } = await supabase.auth.getUser();
-    if (!data.user || !(await checkManager(data.user.id))) throw redirect({ to: '/admin/login' });
+    const isManager = data.user ? await checkManager(data.user.id) : false;
+    if (!canEnterAdmin({ hasSession: !!data.user, isManager })) throw redirect({ to: '/admin/login' });
   },
   component: () => <Outlet />,
 });

@@ -4,15 +4,16 @@
 - [x] Confirmer le nom de la boutique : CYCY shop.
 - [x] Construire le design chocolat et crème et l’accueil avec des images professionnelles.
 - [x] Créer les pages boutique et catégories, la navigation et la recherche avec un catalogue honnêtement vide.
-- [ ] Connecter le catalogue réel et les fiches produits : attend l’autorisation des services commerciaux.
-- [ ] Construire le panier et le parcours de commande sans faux paiement réussi ; vérifier les moyens de paiement disponibles pour le marché ciblé.
-- [ ] Activer Lovable Cloud pour les comptes et les données complémentaires nécessaires : attend la reprise de la configuration commerciale.
-- [ ] Construire l’administration authentifiée : produits, catégories, stocks, promotions, commandes et clients.
+- [x] Connecter le catalogue réel et les fiches produits : catalogue, catégories et promotions lus dans la base.
+- [x] Construire le panier et le parcours de commande sans faux paiement réussi : paiement à la livraison, prix figés et stock décrémenté à la commande.
+- [x] Activer Lovable Cloud : comptes clients, commandes, favoris et images produits.
+- [x] Construire l’administration authentifiée : produits, catégories, stocks, promotions, commandes et clients.
 - [x] Créer les pages contact et informations légales avec des états en attente, sans coordonnées ni politiques inventées.
-- [ ] Ajouter favoris et newsletter : attend la connexion des services ; compléter les pages légales et contact après validation du commerçant.
+- [ ] Ajouter la newsletter : attend la connexion des services ; compléter les pages légales et contact après validation du commerçant.
 - [x] Vérifier les pages publiques sur ordinateur, téléphone et tablette : navigation, recherche, catégories, tri et panier vide ; aucun message d’erreur.
-- [ ] Vérifier les commandes, les accès administrateur et la persistance : attend des services connectés et des produits réels.
+- [x] Vérifier les accès administrateur : visiteur et client redirigés vers /admin/login, écriture client refusée, gestionnaire admise.
 - [x] Lovable Cloud : tables, sécurité, images produits, connexion gestionnaire (/admin/login) et tableau de bord.
 - [x] Accès gestionnaire réservé à Cycyshop242@gmail.com (après confirmation de l’e-mail).
+- [x] Espace d’administration réservé à la gestionnaire de la boutique : double contrôle (route + tableau de bord) et vérification réelle.
 - [ ] Ajout, modification, suppression de produits et commande test : à vérifier une fois le compte gestionnaire créé.
 - [ ] Paiement Mobile Money : à connecter plus tard ; paiement à la livraison actif.

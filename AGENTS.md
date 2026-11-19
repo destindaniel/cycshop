@@ -35,6 +35,7 @@ use the editor.
 - Roles live in user_roles checked via has_role; the manager role is granted only by a DB trigger on the confirmed owner email.
 - Orders go through the place_order SQL function so prices are frozen and stock is decremented atomically; payment is cash on delivery until a real gateway exists.
 - products-images is a private bucket (public buckets are blocked); store paths and display via signed URLs.
-- /admin uses ssr:false with a beforeLoad role check; RLS enforces every write.
+- /admin uses ssr:false with a beforeLoad role check through canEnterAdmin (src/lib/admin-access.ts); the dashboard re-checks it, and RLS enforces every write.
+- has_role must stay non-executable by anon: keep anon and authenticated select policies separate so anonymous reads never call it.
 - Keep catalog category data and page metadata helpers browser-safe in the shared storefront module; category imagery is editorial, not inventory.
 <!-- AGENT-MEMORY:END -->
