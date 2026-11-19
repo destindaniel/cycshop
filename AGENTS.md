@@ -31,6 +31,10 @@ use the editor.
 
 <!-- AGENT-MEMORY:BEGIN -->
 - Keep storefront navigation and footer in StoreShell around the root Outlet so all public pages share a consistent layout.
-- Until commerce services are authorized, show an empty catalog and unavailable account states; never seed pretend products, orders or payments.
+- Catalog, orders and accounts live in Lovable Cloud; never seed pretend products, orders or payments.
+- Roles live in user_roles checked via has_role; the manager role is granted only by a DB trigger on the confirmed owner email.
+- Orders go through the place_order SQL function so prices are frozen and stock is decremented atomically; payment is cash on delivery until a real gateway exists.
+- products-images is a private bucket (public buckets are blocked); store paths and display via signed URLs.
+- /admin uses ssr:false with a beforeLoad role check; RLS enforces every write.
 - Keep catalog category data and page metadata helpers browser-safe in the shared storefront module; category imagery is editorial, not inventory.
 <!-- AGENT-MEMORY:END -->

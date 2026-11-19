@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1795047793876,
+      "tag": "0000_cycy_shop_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1795047818170,
+      "tag": "0001_products_images_policies",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795048080531,
+      "tag": "0002_grant_manager_role",
+      "breakpoints": true
+    }
+  ]
+}

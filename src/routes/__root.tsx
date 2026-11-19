@@ -12,6 +12,9 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { StoreShell } from "@/components/store-shell";
+import { AuthProvider } from "@/hooks/use-auth";
+import { CartProvider } from "@/hooks/use-cart";
+import { Toaster } from "@/components/ui/sonner";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
@@ -126,7 +129,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <StoreShell><Outlet /></StoreShell>
+      <AuthProvider><CartProvider><StoreShell><Outlet /></StoreShell><Toaster /></CartProvider></AuthProvider>
     </QueryClientProvider>
   );
 }

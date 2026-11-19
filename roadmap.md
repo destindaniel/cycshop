@@ -12,3 +12,7 @@
 - [ ] Ajouter favoris et newsletter : attend la connexion des services ; compléter les pages légales et contact après validation du commerçant.
 - [x] Vérifier les pages publiques sur ordinateur, téléphone et tablette : navigation, recherche, catégories, tri et panier vide ; aucun message d’erreur.
 - [ ] Vérifier les commandes, les accès administrateur et la persistance : attend des services connectés et des produits réels.
+- [x] Lovable Cloud : tables, sécurité, images produits, connexion gestionnaire (/admin/login) et tableau de bord.
+- [x] Accès gestionnaire réservé à Cycyshop242@gmail.com (après confirmation de l’e-mail).
+- [ ] Ajout, modification, suppression de produits et commande test : à vérifier une fois le compte gestionnaire créé.
+- [ ] Paiement Mobile Money : à connecter plus tard ; paiement à la livraison actif.
