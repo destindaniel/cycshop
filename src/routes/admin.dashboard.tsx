@@ -4,6 +4,7 @@ import { BarChart3, Boxes, FolderTree, LayoutDashboard, LogOut, Package, Percent
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
 import { canEnterAdmin } from '@/lib/admin-access';
+import { pageHead } from '@/lib/storefront';
 import { AccountSettings, Categories, Customers, OrdersTable, Overview, Products, Promotions, Stats, Stocks } from '@/components/admin/admin-sections';
 
 const tabs = [
@@ -16,6 +17,7 @@ const tabs = [
 type Tab = (typeof tabs)[number]['id'];
 
 export const Route = createFileRoute('/admin/dashboard')({
+  head: () => ({ ...pageHead('Tableau de bord administrateur', 'Gestion privée des produits, stocks et commandes de CYCY shop.'), meta: [...pageHead('Tableau de bord administrateur', 'Gestion privée des produits, stocks et commandes de CYCY shop.').meta, { name: 'robots', content: 'noindex, nofollow' }] }),
   validateSearch: (s: Record<string, unknown>): { tab?: Tab } => { const t = s['tab']; return tabs.some((x) => x.id === t) ? { tab: t as Tab } : {}; },
   component: Dashboard,
 });
