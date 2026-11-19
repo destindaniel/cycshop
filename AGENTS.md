@@ -38,4 +38,5 @@ use the editor.
 - /admin uses ssr:false with a beforeLoad role check through canEnterAdmin (src/lib/admin-access.ts); the dashboard re-checks it, and RLS enforces every write.
 - has_role must stay non-executable by anon: keep anon and authenticated select policies separate so anonymous reads never call it.
 - Keep catalog category data and page metadata helpers browser-safe in the shared storefront module; category imagery is editorial, not inventory.
+- Animations: Motion for scroll reveals (src/components/motion-kit.tsx), GSAP loaded dynamically in useEffect for the hero only; all respect reduced motion so SSR stays safe and pages stay fast.
 <!-- AGENT-MEMORY:END -->
