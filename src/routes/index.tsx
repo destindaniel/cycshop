@@ -1,23 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
-
-// The home route ships no og:image, so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
-export const Route = createFileRoute("/")({
-  component: Index,
-});
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { ArrowRight, Truck, BadgeCheck, Headphones, Sparkles, PackageOpen } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { CategoryGrid } from '@/components/category-grid';
+import { pageHead } from '@/lib/storefront';
+import hero from '@/assets/cycy-hero.webp.asset.json';
+import accessories from '@/assets/cycy-accessoires.webp.asset.json';
+export const Route=createFileRoute('/')({head:()=>pageHead('Le style et la qualité, à portée de clic','Découvrez CYCY shop à Brazzaville : électronique, vêtements, chaussures et accessoires dans un univers chocolat et crème.'),component:Index});
+function Index(){return <main><section className="hero"><img className="hero-image" src={hero.url} alt="Sélection élégante de sac chocolat, casque audio, sneakers et accessoires crème" fetchPriority="high"/><div className="wrap hero-content reveal"><div className="eyebrow">CYCY shop · L’essentiel, autrement</div><h1>Le style et la qualité,<br/><em>à portée de clic.</em></h1><p className="hero-description">Les pièces que vous aimez. La qualité que vous méritez.<br/>Découvrez un univers pensé pour votre quotidien.</p><div className="hero-buttons"><Button asChild size="lg"><Link to="/boutique">Découvrir la boutique<ArrowRight/></Link></Button><Button asChild size="lg" variant="outline"><Link to="/promotions">Voir les promotions</Link></Button></div><div className="hero-note"><Sparkles size={13}/> Mode, technologie & petits coups de cœur.</div></div><div className="hero-index">01 / 01</div><div className="hero-caption">Une sélection. Mille envies.</div></section><section className="benefits"><div className="wrap benefit-grid">{[{icon:Truck,title:'À vos côtés à Brazzaville',text:'Une boutique proche de vous'},{icon:BadgeCheck,title:'Le goût de la qualité',text:'Des essentiels choisis avec soin'},{icon:Headphones,title:'Une attention personnelle',text:'Votre satisfaction, notre priorité'}].map(b=><div className="benefit" key={b.title}><b.icon/><div><h3>{b.title}</h3><p>{b.text}</p></div></div>)}</div></section><section className="wrap section"><div className="section-heading"><div><p className="overline">À chaque envie, son univers</p><h2>Explorez nos catégories</h2></div><Link to="/categories">Tout explorer<ArrowRight size={14}/></Link></div><CategoryGrid/></section><section className="wrap section selection"><div className="section-heading"><div><p className="overline">La sélection CYCY</p><h2>Vos prochains coups de cœur</h2></div><Link to="/boutique">Voir la boutique<ArrowRight size={14}/></Link></div><div className="empty-state"><PackageOpen size={32}/><h3>De belles découvertes se préparent</h3><p>Notre catalogue ouvrira bientôt.<br/>En attendant, explorez les univers de CYCY shop.</p></div></section><section className="editorial"><img src={accessories.url} alt="Sac élégant en cuir chocolat et lunettes de soleil" loading="lazy"/><div className="editorial-copy"><div className="eyebrow mb-5">Les détails font le style</div><h2>L’élégance n’a pas besoin<br/>d’en faire trop.</h2><p>Une belle pièce. Un détail juste. Un essentiel qui vous accompagne.<br/>Trouvez votre signature dans notre univers accessoires.</p><Button asChild variant="secondary" size="lg"><Link to="/categories/$slug" params={{slug:'accessoires'}}>Explorer les accessoires<ArrowRight/></Link></Button></div></section></main>}

@@ -1,0 +1,5 @@
+import { createFileRoute } from '@tanstack/react-router';
+import { pageHead } from '@/lib/storefront';
+const names:Record<string,string>={conditions:'Conditions générales',confidentialite:'Politique de confidentialité',retours:'Retours & livraison'};
+export const Route=createFileRoute('/informations')({validateSearch:(s:Record<string,unknown>):{section?:string}=>({section:typeof s['section']==='string'&&s['section'] in names?s['section']:'conditions'}),head:({match})=>pageHead(names[match.search.section??'conditions']??'Informations','Informations commerciales et légales de CYCY shop.'),component:Information});
+function Information(){const {section}=Route.useSearch();return <main className="wrap"><div className="page-heading"><h1>{names[section??'conditions']}</h1></div><section className="contact-panel"><h2>Informations en préparation</h2><p>Les conditions applicables à CYCY shop seront publiées avant l’ouverture des ventes, après validation par le commerçant.</p><p>Aucune commande ni aucun paiement ne peut être effectué actuellement sur ce site.</p></section></main>}

@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+<!-- AGENT-MEMORY:BEGIN -->
+- Keep storefront navigation and footer in StoreShell around the root Outlet so all public pages share a consistent layout.
+- Until commerce services are authorized, show an empty catalog and unavailable account states; never seed pretend products, orders or payments.
+- Keep catalog category data and page metadata helpers browser-safe in the shared storefront module; category imagery is editorial, not inventory.
+<!-- AGENT-MEMORY:END -->
