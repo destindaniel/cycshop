@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Public category images readable" ON storage.objects;
