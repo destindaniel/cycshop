@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { signActiveProductImages } from '@/lib/product-images.functions';
 import { signPublicCategoryImages } from '@/lib/category-images.functions';
 import type { Database } from '@/integrations/supabase/types';
 
@@ -22,15 +23,21 @@ export function slugify(text: string) {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
-/** Images live in a private bucket; signed URLs let every visitor display them. */
+/** Manager-side signing (RLS allows only the manager to read the bucket directly). */
 export async function withImageUrls(products: Product[]): Promise<ProductWithUrls[]> {
   const paths = [...new Set(products.flatMap((p) => p.images))];
   const map = new Map<string, string>();
   if (paths.length) {
-    const { data } = await supabase.storage.from(BUCKET).createSignedUrls(paths, 60 * 60 * 24);
+    const { data } = await supabase.storage.from(BUCKET).createSignedUrls(paths, 60 * 10);
     for (const item of data ?? []) if (item.path && item.signedUrl) map.set(item.path, item.signedUrl);
   }
   return products.map((p) => ({ ...p, imageUrls: p.images.map((path) => map.get(path)).filter((u): u is string => !!u) }));
+}
+
+/** Storefront signing: the server signs only images of active products, with a short lifetime. */
+async function withPublicImageUrls(products: Product[]): Promise<ProductWithUrls[]> {
+  const signed = products.some((p) => p.images.length) ? await signActiveProductImages().catch(() => ({} as Record<string, string>)) : {};
+  return products.map((p) => ({ ...p, imageUrls: p.images.map((path) => signed[path]).filter((u): u is string => !!u) }));
 }
 
 export const categoriesQuery = queryOptions({
@@ -47,7 +54,7 @@ export const productsQuery = queryOptions({
   queryFn: async () => {
     const { data, error } = await supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
     if (error) throw error;
-    return withImageUrls(data);
+    return withPublicImageUrls(data);
   },
 });
 
@@ -57,7 +64,7 @@ export const productQuery = (slug: string) => queryOptions({
     const { data, error } = await supabase.from('products').select('*').eq('slug', slug).eq('is_active', true).maybeSingle();
     if (error) throw error;
     if (!data) return null;
-    const [withUrls] = await withImageUrls([data]);
+    const [withUrls] = await withPublicImageUrls([data]);
     return withUrls ?? null;
   },
 });

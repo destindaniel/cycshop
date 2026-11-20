@@ -57,6 +57,13 @@
       "when": 1795178084756,
       "tag": "0007_drop_public_category_images_read",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795178164265,
+      "tag": "0008_lock_product_images_and_role_check",
+      "breakpoints": true
     }
   ]
 }
