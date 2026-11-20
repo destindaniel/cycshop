@@ -6,7 +6,7 @@ import { CategoryGrid } from '@/components/category-grid';
 import { ProductCard } from '@/components/product-card';
 import { Reveal, Stagger, StaggerItem, useHeroMotion } from '@/components/motion-kit';
 import { pageHead } from '@/lib/storefront';
-import { productsQuery } from '@/lib/shop-data';
+import { productsQuery, publicCategoriesQuery } from '@/lib/shop-data';
 import hero from '@/assets/cycy-hero.webp.asset.json';
 import accessories from '@/assets/cycy-accessoires.webp.asset.json';
 
@@ -22,6 +22,7 @@ function Index() {
   const heroRef = useHeroMotion();
   const { data: products = [] } = useQuery(productsQuery);
   const picks = products.slice(0, 6);
+  const { data: cats } = useQuery(publicCategoriesQuery);
   return (
     <main>
       <section className="hero" ref={heroRef}>
@@ -52,7 +53,7 @@ function Index() {
         <CategoryGrid />
       </section>
 
-      <section className="marquee" aria-hidden><div className="marquee-track">{Array.from({ length: 2 }).map((_, i) => <span key={i}>Électronique <i>✦</i> Vêtements <i>✦</i> Chaussures <i>✦</i> Accessoires <i>✦</i> Brazzaville <i>✦</i> </span>)}</div></section>
+      <section className="marquee" aria-hidden><div className="marquee-track">{Array.from({ length: 2 }).map((_, i) => <span key={i}>{(cats ?? []).map((c) => <>{c.name} <i>✦</i> </>)}Brazzaville <i>✦</i> </span>)}</div></section>
 
       <section className="wrap section">
         <Reveal className="section-heading"><div><p className="overline">La sélection CYCY</p><h2>Vos prochains coups de cœur</h2></div><Link to="/boutique" className="link-lux">Voir la boutique<ArrowRight size={14} /></Link></Reveal>

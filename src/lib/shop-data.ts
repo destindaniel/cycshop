@@ -69,3 +69,17 @@ export function computeTotals(lines: { price: number; quantity: number }[], disc
   const discount = Math.floor((subtotal * discountPercent) / 100);
   return { subtotal, discount, total: subtotal - discount };
 }
+
+export type PublicCategory = { slug: string; name: string; description: string | null; imageUrl: string | null };
+/** Live categories for the storefront; image_url holds a storage path signed for display. */
+export const publicCategoriesQuery = queryOptions({
+  queryKey: ['categories', 'public'],
+  queryFn: async (): Promise<PublicCategory[]> => {
+    const { data, error } = await supabase.from('categories').select('*').eq('is_public', true).order('sort_order');
+    if (error) throw error;
+    const paths = data.map((c) => c.image_url).filter((p): p is string => !!p && !p.startsWith('http'));
+    const map = new Map<string, string>();
+    if (paths.length) { const { data: s } = await supabase.storage.from(BUCKET).createSignedUrls(paths, 60 * 60 * 24); for (const it of s ?? []) if (it.path && it.signedUrl) map.set(it.path, it.signedUrl); }
+    return data.map((c) => ({ slug: c.slug, name: c.name, description: c.description, imageUrl: c.image_url ? (c.image_url.startsWith('http') ? c.image_url : map.get(c.image_url) ?? null) : null }));
+  },
+});

@@ -1,0 +1,1 @@
+CREATE POLICY "Public category images readable" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'products-images' AND EXISTS (SELECT 1 FROM public.categories c WHERE c.is_public AND c.image_url = objects.name));

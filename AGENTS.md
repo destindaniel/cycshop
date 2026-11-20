@@ -37,7 +37,7 @@ use the editor.
 - products-images is a private bucket (public buckets are blocked); store paths and display via signed URLs.
 - /admin uses ssr:false with a beforeLoad role check through canEnterAdmin (src/lib/admin-access.ts); the dashboard re-checks it, and RLS enforces every write.
 - has_role must stay non-executable by anon: keep anon and authenticated select policies separate so anonymous reads never call it.
-- Keep catalog category data and page metadata helpers browser-safe in the shared storefront module; category imagery is editorial, not inventory.
+- Storefront categories come live from the categories table (publicCategoriesQuery); image_url holds a storage path, with bundled editorial images as fallback for the original slugs.
 - Animations: Motion for scroll reveals (src/components/motion-kit.tsx), GSAP loaded dynamically in useEffect for the hero only; all respect reduced motion so SSR stays safe and pages stay fast.
 - Recover missing route bundles in the root error boundary with one session-scoped reload per minute; preserve manual retry to avoid offline reload loops.
 <!-- AGENT-MEMORY:END -->

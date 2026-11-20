@@ -61,7 +61,23 @@ export function Categories() {
   const add = async (e: React.FormEvent) => { e.preventDefault(); const { error } = await supabase.from('categories').insert({ name: name.trim(), slug: slugify(name), sort_order: cats.length + 1 }); if (error) { fail(error); return; } setName(''); await refresh(); toast.success('Catégorie ajoutée'); };
   const update = async (id: string, patch: Partial<Category>) => { const { error } = await supabase.from('categories').update(patch).eq('id', id); if (error) { fail(error); return; } await refresh(); };
   const del = async (c: Category) => { if (!confirm(`Supprimer « ${c.name} » ? Les produits resteront sans catégorie.`)) return; const { error } = await supabase.from('categories').delete().eq('id', c.id); if (error) { fail(error); return; } await refresh(); };
-  return <><form onSubmit={add} className="flex gap-3 mb-4 max-w-md"><Input required placeholder="Nouvelle catégorie" value={name} onChange={(e) => setName(e.target.value)} /><Button type="submit"><Plus />Ajouter</Button></form><div className="table-scroll"><table className="admin-table"><thead><tr><th>Nom</th><th>Description</th><th>Publique</th><th></th></tr></thead><tbody>{cats.map((c) => <tr key={c.id}><td><Input defaultValue={c.name} onBlur={(e) => { if (e.target.value !== c.name) void update(c.id, { name: e.target.value }); }} /></td><td><Input defaultValue={c.description ?? ''} onBlur={(e) => { if (e.target.value !== (c.description ?? '')) void update(c.id, { description: e.target.value }); }} /></td><td><Switch checked={c.is_public} onCheckedChange={(v) => void update(c.id, { is_public: v })} /></td><td><Button size="icon" variant="ghost" aria-label="Supprimer" onClick={() => void del(c)}><Trash2 /></Button></td></tr>)}</tbody></table></div></>;
+  return <><form onSubmit={add} className="flex gap-3 mb-4 max-w-md"><Input required placeholder="Nouvelle catégorie" value={name} onChange={(e) => setName(e.target.value)} /><Button type="submit"><Plus />Ajouter</Button></form><div className="table-scroll"><table className="admin-table"><thead><tr><th>Photo</th><th>Nom</th><th>Description</th><th>Publique</th><th></th></tr></thead><tbody>{cats.map((c) => <tr key={c.id}><td><CategoryPhoto c={c} onSaved={refresh} /></td><td><Input defaultValue={c.name} onBlur={(e) => { if (e.target.value !== c.name) void update(c.id, { name: e.target.value }); }} /></td><td><Input defaultValue={c.description ?? ''} onBlur={(e) => { if (e.target.value !== (c.description ?? '')) void update(c.id, { description: e.target.value }); }} /></td><td><Switch checked={c.is_public} onCheckedChange={(v) => void update(c.id, { is_public: v })} /></td><td><Button size="icon" variant="ghost" aria-label="Supprimer" onClick={() => void del(c)}><Trash2 /></Button></td></tr>)}</tbody></table></div></>;
+}
+
+function CategoryPhoto({ c, onSaved }: { c: Category; onSaved: () => Promise<unknown> }) {
+  const [busy, setBusy] = useState(false);
+  const { data: url } = useQuery({ queryKey: ['admin', 'category-photo', c.image_url], enabled: !!c.image_url, queryFn: async () => { const { data } = await supabase.storage.from(BUCKET).createSignedUrl(c.image_url!, 3600); return data?.signedUrl ?? null; } });
+  const upload = async (f: File) => {
+    setBusy(true);
+    try {
+      const path = `categories/${c.slug}-${crypto.randomUUID().slice(0, 8)}.${f.name.split('.').pop() ?? 'jpg'}`;
+      const up = await supabase.storage.from(BUCKET).upload(path, f, { contentType: f.type }); if (up.error) throw up.error;
+      const { error } = await supabase.from('categories').update({ image_url: path }).eq('id', c.id); if (error) throw error;
+      if (c.image_url && !c.image_url.startsWith('http')) await supabase.storage.from(BUCKET).remove([c.image_url]);
+      await onSaved(); toast.success('Photo de catégorie enregistrée');
+    } catch (err) { fail(err); } finally { setBusy(false); }
+  };
+  return <label className="cursor-pointer block" title="Changer la photo">{url ? <img className="thumb" src={url} alt="" /> : <div className="thumb grid place-items-center"><ImageOff size={14} /></div>}<input type="file" accept="image/*" className="sr-only" disabled={busy} onChange={(e) => { const f = e.target.files?.[0]; if (f) void upload(f); }} /><span className="text-[10px] text-muted-foreground">{busy ? 'Envoi…' : 'Changer'}</span></label>;
 }
 
 export function OrdersTable({ limit }: { limit?: number }) {
