@@ -1,5 +1,8 @@
 # Plateforme e-commerce premium
 
+- [ ] Renforcer l’administration : double vérification, retrait des liens publics, contrôles des opérations sensibles ; activation progressive à valider pour éviter de bloquer la gestionnaire.
+- [ ] Proposer un accès administrateur séparé et une protection anti-DDoS : attend le choix du domaine et du service de protection ; préciser « ccfi » avant toute implémentation correspondante.
+
 - [x] Reproduire le modèle fourni : accueil vert profond et citron, navigation capsule, catégories compactes et présentation photographique ; navigation, panier et connexion vérifiés à 1440, 822 et 390 px, six tests réussis ; données et accès inchangés.
 
 - [x] Affiner les boutons selon le modèle fourni : formes arrondies, flèches circulaires et animations ; navigation, panier et connexion vérifiés à 1440, 822 et 390 px, réduction de mouvement et neuf tests réussis, sans modifier les accès ni le commerce.
