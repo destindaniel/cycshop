@@ -1,5 +1,7 @@
 # Plateforme e-commerce premium
 
+- [x] Refaire visiblement la direction éditoriale selon le guide fourni : nouvelle photo d’accueil, navigation, typographie, mosaïque de catégories et présentation du catalogue ; parcours publics vérifiés sur cinq tailles d’écran, photos chargées et neuf tests réussis, accès inchangés.
+
 - [x] Affiner le design à partir du guide UI/UX fourni : accueil, navigation, catégories, catalogue et formulaires ; vérifié à 1440, 822, 390 et 375 px, avec réduction de mouvement, sans modifier les données ni les accès.
 
 - [ ] Configurer Shopify : création refusée ; attend une autorisation explicite.
