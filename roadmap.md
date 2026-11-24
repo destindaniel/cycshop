@@ -1,5 +1,7 @@
 # Plateforme e-commerce premium
 
+- [x] Affiner les boutons selon le modèle fourni : formes arrondies, flèches circulaires et animations ; navigation, panier et connexion vérifiés à 1440, 822 et 390 px, réduction de mouvement et neuf tests réussis, sans modifier les accès ni le commerce.
+
 - [x] Affiner la boutique avec le nouveau guide : navigation compacte, catégories lisibles, panier latéral et interactions rapides ; parcours publics vérifiés à 1440, 822 et 390 px, réduction de mouvement et neuf tests réussis.
 
 - [x] Refaire visiblement la direction éditoriale selon le guide fourni : nouvelle photo d’accueil, navigation, typographie, mosaïque de catégories et présentation du catalogue ; parcours publics vérifiés sur cinq tailles d’écran, photos chargées et neuf tests réussis, accès inchangés.
