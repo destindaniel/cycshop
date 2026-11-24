@@ -1,14 +1,14 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowRight, Truck, BadgeCheck, Headphones, ArrowUpRight, PackageOpen } from 'lucide-react';
+import { ArrowRight, Truck, BadgeCheck, Headphones } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CategoryGrid } from '@/components/category-grid';
 import { ProductCard } from '@/components/product-card';
 import { Reveal, Stagger, StaggerItem, useHeroMotion } from '@/components/motion-kit';
 import { pageHead } from '@/lib/storefront';
 import { productsQuery } from '@/lib/shop-data';
-import hero from '@/assets/cycy-editorial-scene.webp.asset.json';
-import accessories from '@/assets/cycy-accessoires.webp.asset.json';
+import hero from '@/assets/cycy-green-headphones.webp.asset.json';
+import earbuds from '@/assets/cycy-green-earbuds.webp.asset.json';
 
 export const Route = createFileRoute('/')({ head: () => ({ meta: [...pageHead('Votre boutique à Brazzaville', 'Découvrez les univers de CYCY shop : mode, électronique, beauté et accessoires à Brazzaville.').meta, ...(hero.url.startsWith('https://') ? [{ property: 'og:image', content: hero.url }, { name: 'twitter:image', content: hero.url }] : [])] }), component: Index });
 
@@ -25,44 +25,31 @@ function Index() {
   return (
     <main className="home-page">
       <section className="hero" ref={heroRef}>
-        <img className="hero-image" src={hero.url} alt="Élégance contemporaine : tenue crème, sac chocolat et essentiels du quotidien" fetchPriority="high" />
+        <img className="hero-image" src={hero.url} alt="Casque vert profond et doré sur un socle, ambiance de la collection CYCY" fetchPriority="high" />
         <div className="hero-veil" aria-hidden />
         <div className="wrap hero-content">
-          <p className="eyebrow hero-fade">La boutique · Brazzaville</p>
-          <h1><span className="line-mask"><span className="hero-line">CYCY <em>shop.</em></span></span></h1>
-           <p className="hero-subtitle hero-fade">Vos envies.<br /><em>Notre signature.</em></p>
-          <p className="hero-description hero-fade">La mode, la beauté, la technologie.<br />Vos envies ont trouvé leur adresse.</p>
+          <p className="eyebrow hero-fade">VOTRE QUOTIDIEN, RÉINVENTÉ</p>
+          <h1><span className="line-mask"><span className="hero-line">CYCY shop.</span></span></h1>
+           <p className="hero-subtitle hero-fade">Un nouveau<br /><em>monde à vous.</em></p>
+          <p className="hero-description hero-fade">Mode. Beauté. Technologie.<br />Les essentiels qui vous ressemblent.</p>
           <div className="hero-buttons hero-fade">
-            <Button asChild size="lg" className="btn-lux"><Link to="/boutique">Explorer la boutique<ArrowUpRight aria-hidden /></Link></Button>
-          </div>
+            <Button asChild size="lg" className="btn-lux"><Link to="/boutique">Découvrir la boutique<ArrowRight aria-hidden /></Link></Button>
+          <Link to="/categories" className="hero-collection"><span><ArrowRight aria-hidden /></span><span>Nos collections<small>Explorer les univers</small></span></Link></div>
+          <div className="hero-benefits hero-fade">{benefits.map((b) => <div className="benefit" key={b.title}><span className="benefit-icon"><b.icon /></span><div><h3>{b.title}</h3><p>{b.text}</p></div></div>)}</div>
         </div>
-        <div className="hero-bottom wrap"><span>Des essentiels. Une signature.</span><Link to="/categories">Découvrir nos univers<ArrowRight size={16} aria-hidden /></Link></div>
-      </section>
-
-      <section className="benefits">
-        <Stagger className="wrap benefit-grid">
-          {benefits.map((b) => <StaggerItem key={b.title}><div className="benefit"><span className="benefit-icon"><b.icon /></span><div><h3>{b.title}</h3><p>{b.text}</p></div></div></StaggerItem>)}
-        </Stagger>
       </section>
 
       <section className="wrap section univers-section">
-         <Reveal className="section-heading"><div><p className="overline">01 / Les univers CYCY</p><h2>À chacun <em>son univers.</em></h2></div><Link to="/categories" className="link-lux">Tout explorer<ArrowRight size={14} /></Link></Reveal>
+         <Reveal className="section-heading"><h2>Nos catégories</h2><span className="heading-rule" aria-hidden /><Link to="/categories" className="link-lux">Tout explorer<ArrowRight size={14} /></Link></Reveal>
         <CategoryGrid />
       </section>
 
-      <section className="selection-section"><div className="wrap section">
-         <Reveal className="section-heading"><div><p className="overline">02 / La sélection</p><h2>La sélection <em>CYCY.</em></h2></div><Link to="/boutique" className="link-lux">Voir la boutique<ArrowRight size={14} /></Link></Reveal>
-        {picks.length ? (
-          <Stagger className="product-grid">{picks.map((p) => <StaggerItem key={p.id}><ProductCard product={p} /></StaggerItem>)}</Stagger>
-        ) : (
-          <Reveal className="empty-state"><PackageOpen size={32} /><h3>De belles découvertes se préparent</h3><p>Notre catalogue ouvrira bientôt.<br />En attendant, explorez les univers de CYCY shop.</p></Reveal>
-        )}
-      </div></section>
+      {picks.length > 0 && <section className="selection-section"><div className="wrap section"><Reveal className="section-heading"><h2>La sélection CYCY</h2><span className="heading-rule" aria-hidden /><Link to="/boutique" className="link-lux">Tous les produits<ArrowRight /></Link></Reveal><Stagger className="product-grid">{picks.map((p) => <StaggerItem key={p.id}><ProductCard product={p} /></StaggerItem>)}</Stagger></div></section>}
 
       <section className="editorial">
-        <img className="editorial-image" src={accessories.url} alt="Sac en cuir chocolat et accessoires soigneusement assortis" loading="lazy" />
+        <img className="editorial-image" src={earbuds.url} alt="Écouteurs blancs sur un socle vert, ambiance des essentiels électroniques" loading="lazy" />
         <div className="editorial-shade" aria-hidden />
-        <Reveal className="wrap editorial-copy"><p className="overline">La signature CYCY</p><h2>Le détail qui<br /><em>change tout.</em></h2><p>Un sac, une touche, une allure.<br />L’élégance se glisse dans les détails.</p><Button asChild variant="secondary" size="lg" className="btn-lux"><Link to="/categories/$slug" params={{ slug: 'accessoires' }}>Les accessoires<ArrowUpRight aria-hidden /></Link></Button></Reveal>
+        <Reveal className="editorial-copy"><p className="overline">LES ESSENTIELS</p><h2>Petit format.<br />Grand <em>style.</em></h2><p>Une nouvelle dimension à votre quotidien.</p><Button asChild variant="secondary" size="lg" className="btn-lux"><Link to="/boutique">Découvrir<ArrowRight aria-hidden /></Link></Button></Reveal>
       </section>
     </main>
   );

@@ -40,7 +40,7 @@ use the editor.
 - Storefront categories come live from the categories table (publicCategoriesQuery); image_url holds a storage path, with bundled editorial images as fallback for the original slugs.
 - Animations: Motion uses transform/opacity for short one-time scroll reveals; GSAP is dynamically loaded for the hero intro only, without ScrollTrigger or continuous parallax, to keep shopping interactions immediate; all respect reduced motion.
 - Recover missing route bundles in the root error boundary with one session-scoped reload per minute; preserve manual retry to avoid offline reload loops.
-- Keep the editorial storefront direction in the shared stylesheet and Button variants, with the responsive masthead in StoreShell and live category mosaics in CategoryGrid; preserve catalog queries and admin authorization so visual work cannot change commerce permissions.
+- Scope the reference storefront theme to StoreShell and its shared controls, with a responsive capsule masthead and live categories; keep the administration theme and commerce authorization independent of visual changes.
 - Implement pill-button geometry and interaction states in the shared Button variants and stylesheet; preserve Radix Slot composition and reduced-motion support so every action stays accessible.
 - StoreShell menu and cart use a shared right-side Dialog drawer with Radix focus management; close on navigation rather than arbitrary content clicks to preserve typing and keyboard access.
 <!-- AGENT-MEMORY:END -->

@@ -1,5 +1,7 @@
 # Plateforme e-commerce premium
 
+- [x] Reproduire le modèle fourni : accueil vert profond et citron, navigation capsule, catégories compactes et présentation photographique ; navigation, panier et connexion vérifiés à 1440, 822 et 390 px, six tests réussis ; données et accès inchangés.
+
 - [x] Affiner les boutons selon le modèle fourni : formes arrondies, flèches circulaires et animations ; navigation, panier et connexion vérifiés à 1440, 822 et 390 px, réduction de mouvement et neuf tests réussis, sans modifier les accès ni le commerce.
 
 - [x] Affiner la boutique avec le nouveau guide : navigation compacte, catégories lisibles, panier latéral et interactions rapides ; parcours publics vérifiés à 1440, 822 et 390 px, réduction de mouvement et neuf tests réussis.
