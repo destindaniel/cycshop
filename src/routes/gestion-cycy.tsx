@@ -39,10 +39,13 @@ function Dashboard() {
   const { tab = 'apercu' } = Route.useSearch(); const navigate = useNavigate(); const queryClient = useQueryClient(); const { user, isManager, assuranceLevel, loading } = useAuth();
   // Second lock: the route gate already blocks non-managers, but the panel never renders without a confirmed manager session.
   const allowed = canEnterAdmin({ hasSession: !!user, isManager, assuranceLevel });
-  const serverAccess = useAdminData('audit');
+  const serverAccess = useAdminData('audit', true);
   if (loading) return <main className="admin-main"><p className="text-sm text-muted-foreground">Vérification de l’accès…</p></main>;
-  if (!allowed || serverAccess.isError) return <main className="admin-main"><h1>403 · Accès refusé</h1><p role="alert">Reconnectez-vous et vérifiez votre code de sécurité.</p><Button onClick={async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); await navigate({ to: '/compte', replace: true }); }}>Se reconnecter</Button></main>;
-  if (serverAccess.isPending) return <main className="admin-main"><p role="status">Vérification de l’accès…</p></main>;
+  const forbidden = !allowed || (serverAccess.isError && /403|Unauthorized/.test(serverAccess.error.message));
+  if (forbidden) return <main className="admin-main"><h1>403 · Accès refusé</h1><p role="alert">Reconnectez-vous et vérifiez votre code de sécurité.</p><Button onClick={async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); await navigate({ to: '/compte', replace: true }); }}>Se reconnecter</Button></main>;
+  if (serverAccess.isError) return <main className="admin-main"><h1>Administration indisponible</h1><p role="alert">Les données ne peuvent pas être chargées pour le moment.</p><Button onClick={() => serverAccess.refetch()}>Réessayer</Button></main>;
+  // Never display an old screen snapshot while its server access is being rechecked.
+  if (serverAccess.isPending || serverAccess.isFetching) return <main className="admin-main"><p role="status">Vérification de l’accès…</p></main>;
   const current = tabs.find((t) => t.id === tab) ?? tabs[0];
   return <div className="admin-shell"><aside className="admin-side"><p className="logo">CYCY<span> admin</span></p>{tabs.map((t) => <Button variant="ghost" key={t.id} className={t.id === tab ? 'active justify-start' : 'justify-start'} onClick={() => navigate({ to: '/gestion-cycy', search: { tab: t.id } })}><t.icon size={16} />{t.label}</Button>)}<Button variant="ghost" className="md:mt-auto justify-start" onClick={async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); await navigate({ to: '/compte', replace: true }); }}><LogOut size={16} />Déconnexion</Button></aside><main className="admin-main"><h1>{current.label}</h1>
     {tab === 'apercu' && <Overview />}{tab === 'produits' && <Products />}{tab === 'categories' && <Categories />}{tab === 'commandes' && <OrdersTable />}{tab === 'clients' && <Customers />}{tab === 'stocks' && <Stocks />}{tab === 'promotions' && <Promotions />}{tab === 'statistiques' && <Stats />}{tab === 'journal' && <AuditLog />}{tab === 'compte' && <AccountSettings email={user?.email ?? ''} />}

@@ -1,8 +1,10 @@
 import { createMiddleware, createServerFn } from '@tanstack/react-start';
-import { setResponseHeader, setResponseStatus } from '@tanstack/react-start/server';
+import { getRequestHeader, setResponseHeader, setResponseStatus } from '@tanstack/react-start/server';
+import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { adminWriteSchema, imagePathsSchema } from '@/lib/admin-security';
 import { slugify } from '@/lib/shop-data';
+import { browserStorageUrl } from '@/lib/storage-url';
 
 function definedPatch<T extends object>(row: T) {
   return Object.fromEntries(Object.entries(row).filter(([, value]) => value !== undefined)) as { [K in keyof T]?: Exclude<T[K], undefined> };
@@ -12,9 +14,18 @@ const requireManager = createMiddleware({ type: 'function' })
   .middleware([requireSupabaseAuth])
   .server(async ({ context, next }) => {
     setResponseHeader('Cache-Control', 'no-store');
-    const { data: identity, error } = await context.supabase.auth.getUser();
-    const role = await context.supabase.rpc('has_role', { _user_id: context.userId, _role: 'gestionnaire' });
-    if (error || identity.user?.id !== context.userId || role.error || role.data !== true) {
+    const { authorizeManager } = await import('@/lib/admin-authorization.server');
+    const allowed = await authorizeManager(context.userId, {
+      currentUser: async () => {
+        const { data, error } = await context.supabase.auth.getUser();
+        return error ? null : data.user?.id ?? null;
+      },
+      managerRole: async () => {
+        const result = await context.supabase.rpc('has_role', { _user_id: context.userId, _role: 'gestionnaire' });
+        return !result.error && result.data === true;
+      },
+    });
+    if (!allowed) {
       setResponseStatus(403);
       throw new Error('403 — Accès refusé. Reconnectez-vous et vérifiez votre code de sécurité.');
     }
@@ -27,6 +38,8 @@ export const verifyAdminSession = createServerFn({ method: 'POST' })
 export const getAdminData = createServerFn({ method: 'POST' })
   .middleware([requireManager]).handler(async ({ context }) => {
     const db = context.supabase;
+    const event = await db.rpc('record_admin_action', { _resource: 'admin-snapshot', _operation: 'READ' });
+    if (event.error) throw new Error('La consultation ne peut pas être journalisée.');
     const [products, categories, orders, profiles, promotions, audit] = await Promise.all([
       db.from('products').select('*').order('created_at', { ascending: false }),
       db.from('categories').select('*').order('sort_order'),
@@ -41,7 +54,7 @@ export const getAdminData = createServerFn({ method: 'POST' })
     const signed = paths.length ? await db.storage.from('products-images').createSignedUrls(paths, 600) : null;
     if (signed?.error) throw new Error('Les photos ne peuvent pas être chargées.');
     const urls: Record<string, string> = {};
-    for (const image of signed?.data ?? []) if (image.path && image.signedUrl) urls[image.path] = image.signedUrl;
+    for (const image of signed?.data ?? []) if (image.path && image.signedUrl) urls[image.path] = browserStorageUrl(image.signedUrl);
     return {
       products: rows.map((p) => ({ ...p, imageUrls: p.images.flatMap((path) => urls[path] ? [urls[path]] : []) })),
       categories: categories.data ?? [], orders: orders.data ?? [], profiles: profiles.data ?? [],
@@ -80,6 +93,10 @@ export const writeAdminData = createServerFn({ method: 'POST' })
         if (!result.error) {
           const paths = product?.data?.images ?? (category?.data?.image_url && !category.data.image_url.startsWith('http') ? [category.data.image_url] : []);
           if (paths.length) {
+            for (const path of paths) {
+              const intent = await db.rpc('record_admin_image_action', { _operation: 'DELETE_REQUEST', _path: path });
+              if (intent.error) throw new Error('Suppression des photos annulée : journalisation impossible.');
+            }
             const removed = await db.storage.from('products-images').remove(paths);
             if (removed.error) throw new Error('Élément supprimé, mais certaines photos n’ont pas pu être retirées.');
             for (const path of paths) {
@@ -111,6 +128,8 @@ export const uploadAdminImage = createServerFn({ method: 'POST' })
     if (!valid) throw new Error('Format de photo invalide.');
     const ext = file.type === 'image/jpeg' ? 'jpg' : file.type === 'image/png' ? 'png' : 'webp';
     const path = `${crypto.randomUUID()}.${ext}`;
+    const intent = await context.supabase.rpc('record_admin_image_action', { _operation: 'UPLOAD_REQUEST', _path: path });
+    if (intent.error) throw new Error('Envoi annulé : journalisation impossible.');
     const result = await context.supabase.storage.from('products-images').upload(path, bytes, { contentType: file.type });
     if (result.error) throw new Error('Envoi de la photo impossible.');
     const log = await context.supabase.rpc('record_admin_image_action', { _operation: 'UPLOAD', _path: path });
@@ -124,11 +143,35 @@ export const uploadAdminImage = createServerFn({ method: 'POST' })
 export const removeAdminImages = createServerFn({ method: 'POST' })
   .middleware([requireManager]).inputValidator((input: unknown) => imagePathsSchema.parse(input))
   .handler(async ({ data, context }) => {
+    for (const path of data) {
+      const intent = await context.supabase.rpc('record_admin_image_action', { _operation: 'DELETE_REQUEST', _path: path });
+      if (intent.error) throw new Error('Suppression annulée : journalisation impossible.');
+    }
     const removed = await context.supabase.storage.from('products-images').remove(data);
     if (removed.error) throw new Error('Suppression des photos impossible.');
     for (const path of data) {
       const log = await context.supabase.rpc('record_admin_image_action', { _operation: 'DELETE', _path: path });
       if (log.error) throw new Error('La suppression ne peut pas être journalisée.');
     }
+    return { ok: true };
+  });
+
+export const changeAdminPassword = createServerFn({ method: 'POST' })
+  .middleware([requireManager])
+  .inputValidator((input: unknown) => z.object({ current: z.string().min(1).max(256), password: z.string().min(8).max(256) }).strict().parse(input))
+  .handler(async ({ data, context }) => {
+    const url = process.env['SUPABASE_URL'];
+    const key = process.env['SUPABASE_PUBLISHABLE_KEY'];
+    const authorization = getRequestHeader('Authorization');
+    if (!url || !key || !authorization) throw new Error('Modification du mot de passe impossible.');
+    const event = await context.supabase.rpc('record_admin_action', { _resource: 'account', _operation: 'PASSWORD_CHANGE_REQUEST' });
+    if (event.error) throw new Error('La demande ne peut pas être journalisée.');
+    const response = await fetch(`${url}/auth/v1/user`, {
+      method: 'PUT', headers: { apikey: key, Authorization: authorization, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: data.password, current_password: data.current }), signal: AbortSignal.timeout(10000),
+    });
+    if (!response.ok) throw new Error('Mot de passe actuel incorrect ou nouveau mot de passe refusé.');
+    const logged = await context.supabase.rpc('record_admin_action', { _resource: 'account', _operation: 'PASSWORD_CHANGE' });
+    if (logged.error) throw new Error('Mot de passe changé ; la confirmation du journal n’a pas pu être enregistrée.');
     return { ok: true };
   });

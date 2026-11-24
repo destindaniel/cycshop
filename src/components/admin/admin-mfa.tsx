@@ -50,7 +50,8 @@ export function AdminMfa() {
     await activateAdminMfa();
     await queryClient.cancelQueries();
     queryClient.clear();
-    await navigate({ to: '/gestion-cycy', replace: true });
+    // A new document applies the private page's anti-framing headers, even from /compte.
+    await navigate({ to: '/gestion-cycy', replace: true, reloadDocument: true });
   };
 
   const verify = async (event: React.FormEvent) => {

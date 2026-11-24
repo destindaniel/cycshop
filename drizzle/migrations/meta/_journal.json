@@ -85,6 +85,27 @@
       "when": 1795518318621,
       "tag": "0011_server_admin_security_audit_and_guest_checkout",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1795518813837,
+      "tag": "0012_lock_nonmanager_mutations_and_audit_accounts",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1795518911268,
+      "tag": "0013_journal_admin_reads_and_password_changes",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1795519141824,
+      "tag": "0014_lock_trigger_helpers_and_journal_file_intents",
+      "breakpoints": true
     }
   ]
 }

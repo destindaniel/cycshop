@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { supabase } from '@/integrations/supabase/client';
 import { formatPrice, slugify, statusLabels, type Category, type OrderStatus, type ProductWithUrls } from '@/lib/shop-data';
 
 import { useAdminActions, useAdminData } from '@/hooks/use-admin-data';
@@ -119,8 +118,9 @@ export function Stats() {
 }
 
 export function AccountSettings({ email }: { email: string }) {
+  const { password } = useAdminActions();
   const [current, setCurrent] = useState(''); const [next, setNext] = useState(''); const [busy, setBusy] = useState(false);
-  return <div className="account-card max-w-md"><h2>Mon compte</h2><p className="text-sm text-muted-foreground">{email}</p><form className="form-stack" onSubmit={async (e) => { e.preventDefault(); setBusy(true); const { error } = await supabase.auth.updateUser({ password: next, current_password: current } as { password: string }); setBusy(false); if (error) { toast.error('Mot de passe actuel incorrect ou nouveau mot de passe refusé.'); return; } setCurrent(''); setNext(''); toast.success('Mot de passe modifié'); }}><label>Mot de passe actuel<Input type="password" required value={current} onChange={(e) => setCurrent(e.target.value)} /></label><label>Nouveau mot de passe<Input type="password" required minLength={8} value={next} onChange={(e) => setNext(e.target.value)} /></label><Button type="submit" disabled={busy}>Modifier le mot de passe</Button></form></div>;
+  return <div className="account-card max-w-md"><h2>Mon compte</h2><p className="text-sm text-muted-foreground">{email}</p><form className="form-stack" onSubmit={async (e) => { e.preventDefault(); setBusy(true); try { await password({ data: { current, password: next } }); setCurrent(''); setNext(''); toast.success('Mot de passe modifié'); } catch (error) { fail(error); } finally { setBusy(false); } }}><label>Mot de passe actuel<Input type="password" required value={current} onChange={(e) => setCurrent(e.target.value)} /></label><label>Nouveau mot de passe<Input type="password" required minLength={8} value={next} onChange={(e) => setNext(e.target.value)} /></label><Button type="submit" disabled={busy}>Modifier le mot de passe</Button></form></div>;
 }
 
 export function AuditLog() {

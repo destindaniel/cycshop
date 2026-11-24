@@ -2,13 +2,9 @@ import { createServerFn } from '@tanstack/react-start';
 
 /** Signs images of active products server-side with a short lifetime; visitors never read storage directly. */
 export const signActiveProductImages = createServerFn({ method: 'GET' }).handler(async () => {
-  const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
-  const { data, error } = await supabaseAdmin.from('products').select('images').eq('is_active', true);
+  const { publicCatalogClient, signPublicPaths } = await import('@/lib/public-images.server');
+  const { data, error } = await publicCatalogClient().from('products').select('images').eq('is_active', true);
   if (error) throw new Error('Images indisponibles');
   const paths = [...new Set((data ?? []).flatMap((p) => p.images))];
-  if (!paths.length) return {} as Record<string, string>;
-  const { data: signed } = await supabaseAdmin.storage.from('products-images').createSignedUrls(paths, 60 * 10);
-  const out: Record<string, string> = {};
-  for (const it of signed ?? []) if (it.path && it.signedUrl) out[it.path] = it.signedUrl;
-  return out;
+  return signPublicPaths(paths);
 });

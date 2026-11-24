@@ -1,11 +1,13 @@
 # Plateforme e-commerce premium
 
-- [ ] Sécuriser les actions et lectures administrateur côté serveur, imposer TOTP et expiration à sept jours, journaliser les changements et préserver la commande invitée.
-- [ ] Déplacer l’administration vers /gestion-cycy, ajouter les en-têtes de sécurité et vérifier les écrans et refus.
-- [ ] Protéger la connexion par Turnstile et cinq tentatives en quinze minutes : attend les clés Turnstile pour activation et validation réelle.
+- [x] Sécuriser les actions et lectures administrateur côté serveur, imposer TOTP et expiration à sept jours, journaliser les changements et préserver la commande invitée.
+- [x] Déplacer l’administration vers /gestion-cycy, ajouter les en-têtes de sécurité et vérifier les écrans et refus.
+- [ ] Activer et vérifier Turnstile : attend une vraie Site Key ; la valeur reçue n’est pas une clé publique et n’a pas été utilisée. La clé secrète est stockée mais n’a pas été validée avec le widget.
+- [ ] Vérifier la limite par IP en production et durcir le service d’authentification direct : l’application refuse les en-têtes IP non fiables et utilise un compteur partagé si l’hébergement ne fournit pas d’IP vérifiable ; les réglages natifs CAPTCHA et session de sept jours ne sont pas exposés par les outils disponibles.
+- [ ] Vérifier les modifications autorisées et la journalisation avec une vraie session TOTP : la session gestionnaire disponible n’a que le premier facteur ; aucun produit ni commande fictifs n’a été créé.
 
 - [x] Préparer le parcours de double vérification, retirer les liens administrateur publics et renforcer les paramètres de mots de passe ; accès privé et refus côté données/fichiers vérifiés, seize tests réussis.
-- [ ] Publier puis activer la double vérification de la gestionnaire et vérifier le parcours autorisé complet : attend son association de téléphone et un premier code réel ; la session temporaire de test n’a pas de session d’authentification enregistrée et ne permet pas de tester l’association native.
+- [ ] Publier les nouveaux écrans puis vérifier le parcours autorisé complet : le téléphone est déjà associé et l’obligation TOTP est activée ; attend un code réel du téléphone pour tester des modifications autorisées, sans supprimer ni remplacer cette association.
 - [ ] Proposer un accès administrateur séparé et une protection anti-DDoS : pas de domaine détenu ; achat ou connexion d’un domaine et choix du service de protection nécessaires avant activation.
 - [ ] Argon2i demandé à la place de « ccfi » : non configurable avec l’authentification gérée actuelle ; ne pas ajouter de faux hachage ou de stockage parallèle des mots de passe.
 
@@ -34,6 +36,6 @@
 - [x] Lovable Cloud : tables, sécurité, images produits, connexion gestionnaire (/admin/login) et tableau de bord.
 - [x] Accès gestionnaire réservé à Cycyshop242@gmail.com (après confirmation de l’e-mail).
 - [x] Espace d’administration réservé à la gestionnaire de la boutique : double contrôle (route + tableau de bord) et vérification réelle.
-- [ ] Ajout, modification, suppression de produits et commande test : à vérifier une fois le compte gestionnaire créé.
+- [ ] Ajout, modification, suppression de produits et commande réelle : attend une session TOTP autorisée et un véritable produit à vendre ; aucun catalogue ni commande fictif ne doit être ajouté.
 - [ ] Paiement Mobile Money : à connecter plus tard ; paiement à la livraison actif.
 - [x] Espace « Mon compte » réservé à l'administratrice : connexion gestionnaire uniquement, commande sans compte client, favoris retirés.

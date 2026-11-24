@@ -1,0 +1,11 @@
+DROP POLICY "Own profile update" ON public.profiles;
+CREATE POLICY "Manager updates profiles" ON public.profiles FOR UPDATE TO authenticated USING(public.has_role(auth.uid(),'gestionnaire')) WITH CHECK(public.has_role(auth.uid(),'gestionnaire'));
+DROP POLICY "Own addresses" ON public.addresses;
+CREATE POLICY "Own addresses read" ON public.addresses FOR SELECT TO authenticated USING(user_id=auth.uid());
+CREATE POLICY "Manager manages addresses" ON public.addresses FOR ALL TO authenticated USING(public.has_role(auth.uid(),'gestionnaire')) WITH CHECK(public.has_role(auth.uid(),'gestionnaire'));
+DROP POLICY "Own favorites" ON public.favorites;
+CREATE POLICY "Own favorites read" ON public.favorites FOR SELECT TO authenticated USING(user_id=auth.uid());
+CREATE POLICY "Manager manages favorites" ON public.favorites FOR ALL TO authenticated USING(public.has_role(auth.uid(),'gestionnaire')) WITH CHECK(public.has_role(auth.uid(),'gestionnaire'));
+CREATE TRIGGER audit_profiles AFTER UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.audit_admin_change();
+CREATE TRIGGER audit_addresses AFTER INSERT OR UPDATE OR DELETE ON public.addresses FOR EACH ROW EXECUTE FUNCTION public.audit_admin_change();
+CREATE TRIGGER audit_favorites AFTER INSERT OR UPDATE OR DELETE ON public.favorites FOR EACH ROW EXECUTE FUNCTION public.audit_admin_change();

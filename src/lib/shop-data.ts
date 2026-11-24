@@ -23,17 +23,6 @@ export function slugify(text: string) {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
-/** Manager-side signing (RLS allows only the manager to read the bucket directly). */
-export async function withImageUrls(products: Product[]): Promise<ProductWithUrls[]> {
-  const paths = [...new Set(products.flatMap((p) => p.images))];
-  const map = new Map<string, string>();
-  if (paths.length) {
-    const { data } = await supabase.storage.from(BUCKET).createSignedUrls(paths, 60 * 10);
-    for (const item of data ?? []) if (item.path && item.signedUrl) map.set(item.path, item.signedUrl);
-  }
-  return products.map((p) => ({ ...p, imageUrls: p.images.map((path) => map.get(path)).filter((u): u is string => !!u) }));
-}
-
 /** Storefront signing: the server signs only images of active products, with a short lifetime. */
 async function withPublicImageUrls(products: Product[]): Promise<ProductWithUrls[]> {
   const signed = products.some((p) => p.images.length) ? await signActiveProductImages().catch(() => ({} as Record<string, string>)) : {};

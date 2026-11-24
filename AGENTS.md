@@ -35,7 +35,7 @@ use the editor.
 - Roles live in user_roles checked via has_role; the manager role is granted only by a DB trigger on the confirmed owner email.
 - Orders go through the place_order SQL function so prices are frozen and stock is decremented atomically; payment is cash on delivery until a real gateway exists.
 - products-images is a private bucket (public buckets are blocked); store paths and display via signed URLs.
-- /admin uses ssr:false with a beforeLoad role and aal2 check through canEnterAdmin; the dashboard re-checks both, and RLS enforces every write so a hidden link is never the authorization boundary.
+- The private administration uses a client-only route gate plus an authenticated server snapshot per screen; server mutations revalidate the user, has_role, pinned TOTP and session age, with RLS as the final boundary, because neither a hidden path nor a client gate authorizes an RPC.
 - Activate sticky admin MFA only after native TOTP verification through activate_admin_mfa; has_role requires aal2 and the session's pinned verified factor for activated managers, and browser clients cannot reset or rebind activation, preventing factor removal or new enrollment from restoring password-only access.
 - Use own user_roles reads for pre-MFA manager identity and has_role for privileged authorization; this lets managers reach the verification form without granting pre-MFA management rights after activation.
 - Keep the private /compte login outside the storefront shell with no public navigation links and noindex metadata; a separate protected domain needs independent origin-bypass verification before it can be called isolated.
@@ -46,4 +46,9 @@ use the editor.
 - Scope the reference storefront theme to StoreShell and its shared controls, with a responsive capsule masthead and live categories; keep the administration theme and commerce authorization independent of visual changes.
 - Implement pill-button geometry and interaction states in the shared Button variants and stylesheet; preserve Radix Slot composition and reduced-motion support so every action stays accessible.
 - StoreShell menu and cart use a shared right-side Dialog drawer with Radix focus management; close on navigation rather than arbitrary content clicks to preserve typing and keyboard access.
+- Admin screens use server functions for all data mutations and file operations; table triggers journal changes atomically and file handlers journal storage actions, avoiding client-controlled prices, permissions and audit attribution.
+- Guest orders are created only through the atomic place_order RPC, never unrestricted direct inserts, so public checkout cannot forge totals or bypass stock checks.
+- Public image signing first selects eligible paths through anonymous RLS, then uses privileged storage signing only for those paths; requiring a manager for storefront images would break guest shopping.
+- Password login uses a durable atomic server limiter, generic failures and real Turnstile verification when configured; never trust caller-controlled forwarding headers for IP limits, and never pretend the app limiter protects the directly reachable hosted Auth endpoint.
+- The server entry applies security headers and supplies the router with a fresh request nonce for CSP rather than allowing arbitrary inline JavaScript; private administration pages deny framing while public pages remain previewable.
 <!-- AGENT-MEMORY:END -->

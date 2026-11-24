@@ -2,6 +2,7 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { secureResponse } from './lib/security-headers';
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -49,16 +50,21 @@ function isH3SwallowedErrorBody(body: string): boolean {
 // twice and renders garbled.
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(24))));
+    const requestHeaders = new Headers(request.headers);
+    // Overwrite rather than trusting a caller-supplied nonce.
+    requestHeaders.set('x-cycy-csp-nonce', nonce);
+    const securedRequest = new Request(request, { headers: requestHeaders });
     try {
       const handler = await getServerEntry();
-      const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      const response = await handler.fetch(securedRequest, env, ctx);
+      return await secureResponse(request, await normalizeCatastrophicSsrResponse(response), nonce);
     } catch (error) {
       console.error(error);
-      return new Response(renderErrorPage(), {
+      return await secureResponse(request, new Response(renderErrorPage(), {
         status: 500,
         headers: { "content-type": "text/html; charset=utf-8" },
-      });
+      }), nonce);
     }
   },
 };

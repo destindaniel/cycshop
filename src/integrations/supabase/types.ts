@@ -479,6 +479,10 @@ export type Database = {
         }
         Returns: string
       }
+      record_admin_action: {
+        Args: { _operation: string; _resource: string }
+        Returns: undefined
+      }
       record_admin_image_action: {
         Args: { _operation: string; _path: string }
         Returns: undefined
