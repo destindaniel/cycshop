@@ -51,7 +51,7 @@ export const getAdminData = createServerFn({ method: 'POST' })
     if ([products, categories, orders, profiles, promotions, audit].some((r) => r.error)) throw new Error('Les données ne peuvent pas être chargées.');
     const rows = products.data ?? [];
     const paths = [...new Set([...rows.flatMap((p) => p.images), ...(categories.data ?? []).flatMap((c) => c.image_url && !c.image_url.startsWith('http') ? [c.image_url] : [])])];
-    const signed = paths.length ? await db.storage.from('products-images').createSignedUrls(paths, 600) : null;
+    const signed = paths.length ? await db.storage.from('products-images').createSignedUrls(paths, 60) : null;
     if (signed?.error) throw new Error('Les photos ne peuvent pas être chargées.');
     const urls: Record<string, string> = {};
     for (const image of signed?.data ?? []) if (image.path && image.signedUrl) urls[image.path] = browserStorageUrl(image.signedUrl);
