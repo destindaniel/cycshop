@@ -5,3 +5,6 @@ export type AdminAccess = { hasSession: boolean; isManager: boolean; assuranceLe
 export const canEnterAdmin = ({ hasSession, isManager }: AdminAccess) => hasSession && isManager;
 
 export const isTotpCode = (code: string) => /^\d{6}$/.test(code);
+
+// Set only after a successful password login in this tab; cleared when the tab/browser closes.
+export const ADMIN_UNLOCK_KEY = 'cycy-admin-unlocked';

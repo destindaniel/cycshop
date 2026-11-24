@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { BarChart3, Boxes, FolderTree, LayoutDashboard, LogOut, Package, Percent, ShoppingCart, UserCog, Users, ShieldCheck } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
-import { canEnterAdmin } from '@/lib/admin-access';
+import { ADMIN_UNLOCK_KEY, canEnterAdmin } from '@/lib/admin-access';
 import { pageHead } from '@/lib/storefront';
 import { AccountSettings, AuditLog, Categories, Customers, OrdersTable, Overview, Products, Promotions, Stats, Stocks } from '@/components/admin/admin-sections';
 
@@ -25,6 +25,7 @@ type Tab = (typeof tabs)[number]['id'];
 export const Route = createFileRoute('/gestion-cycy')({
   ssr: false,
   beforeLoad: async () => {
+    if (sessionStorage.getItem(ADMIN_UNLOCK_KEY) !== '1') { await supabase.auth.signOut(); throw redirect({ to: '/compte' }); }
     const { data } = await supabase.auth.getUser();
     const isManager = data.user ? await checkManager(data.user.id) : false;
     const assuranceLevel = data.user ? await getAdminAssurance() : null;
@@ -42,12 +43,12 @@ function Dashboard() {
   const serverAccess = useAdminData('audit', true);
   if (loading) return <main className="admin-main"><p className="text-sm text-muted-foreground">Vérification de l’accès…</p></main>;
   const forbidden = !allowed || (serverAccess.isError && /403|Unauthorized/.test(serverAccess.error.message));
-  if (forbidden) return <main className="admin-main"><h1>403 · Accès refusé</h1><p role="alert">Reconnectez-vous et vérifiez votre code de sécurité.</p><Button onClick={async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); await navigate({ to: '/compte', replace: true }); }}>Se reconnecter</Button></main>;
+  if (forbidden) return <main className="admin-main"><h1>403 · Accès refusé</h1><p role="alert">Reconnectez-vous et vérifiez votre code de sécurité.</p><Button onClick={async () => { await queryClient.cancelQueries(); queryClient.clear(); sessionStorage.removeItem(ADMIN_UNLOCK_KEY); await supabase.auth.signOut(); await navigate({ to: '/compte', replace: true }); }}>Se reconnecter</Button></main>;
   if (serverAccess.isError) return <main className="admin-main"><h1>Administration indisponible</h1><p role="alert">Les données ne peuvent pas être chargées pour le moment.</p><Button onClick={() => serverAccess.refetch()}>Réessayer</Button></main>;
   // Never display an old screen snapshot while its server access is being rechecked.
   if (serverAccess.isPending || serverAccess.isFetching) return <main className="admin-main"><p role="status">Vérification de l’accès…</p></main>;
   const current = tabs.find((t) => t.id === tab) ?? tabs[0];
-  return <div className="admin-shell"><aside className="admin-side"><p className="logo">CYCY<span> admin</span></p>{tabs.map((t) => <Button variant="ghost" key={t.id} className={t.id === tab ? 'active justify-start' : 'justify-start'} onClick={() => navigate({ to: '/gestion-cycy', search: { tab: t.id } })}><t.icon size={16} />{t.label}</Button>)}<Button variant="ghost" className="md:mt-auto justify-start" onClick={async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); await navigate({ to: '/compte', replace: true }); }}><LogOut size={16} />Déconnexion</Button></aside><main className="admin-main"><h1>{current.label}</h1>
+  return <div className="admin-shell"><aside className="admin-side"><p className="logo">CYCY<span> admin</span></p>{tabs.map((t) => <Button variant="ghost" key={t.id} className={t.id === tab ? 'active justify-start' : 'justify-start'} onClick={() => navigate({ to: '/gestion-cycy', search: { tab: t.id } })}><t.icon size={16} />{t.label}</Button>)}<Button variant="ghost" className="md:mt-auto justify-start" onClick={async () => { await queryClient.cancelQueries(); queryClient.clear(); sessionStorage.removeItem(ADMIN_UNLOCK_KEY); await supabase.auth.signOut(); await navigate({ to: '/compte', replace: true }); }}><LogOut size={16} />Déconnexion</Button></aside><main className="admin-main"><h1>{current.label}</h1>
     {tab === 'apercu' && <Overview />}{tab === 'produits' && <Products />}{tab === 'categories' && <Categories />}{tab === 'commandes' && <OrdersTable />}{tab === 'clients' && <Customers />}{tab === 'stocks' && <Stocks />}{tab === 'promotions' && <Promotions />}{tab === 'statistiques' && <Stats />}{tab === 'journal' && <AuditLog />}{tab === 'compte' && <AccountSettings email={user?.email ?? ''} />}
   </main></div>;
 }

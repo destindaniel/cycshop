@@ -12,12 +12,15 @@ import { useServerFn } from '@tanstack/react-start';
 import { adminLogin, getLoginProtection } from '@/lib/admin-login.functions';
 import { LOGIN_ERROR } from '@/lib/admin-security';
 import { Turnstile } from '@/components/admin/turnstile';
+import { ADMIN_UNLOCK_KEY } from '@/lib/admin-access';
 
 export const Route = createFileRoute('/compte')({ head: () => { const head = pageHead('Connexion administrateur', 'Accès privé et double vérification pour la gestion de CYCY shop.'); return { meta: [...head.meta, { name: 'robots', content: 'noindex, nofollow' }] }; }, component: AccountPage });
 
 function AccountPage() {
-  const { user, isManager, loading } = useAuth();
-  return <main className="min-h-dvh bg-background px-5 py-12 grid place-items-center"><section className="w-full max-w-sm space-y-8"><p className="text-xl font-semibold text-primary">CYCY shop</p>{loading ? <p role="status" className="text-sm text-muted-foreground">Chargement…</p> : user && isManager ? <OpenAdmin /> : <AdminLogin />}</section></main>;
+  const { loading } = useAuth();
+  // Chaque visite exige de retaper l'e-mail et le mot de passe : toute ancienne session est fermée.
+  useEffect(() => { sessionStorage.removeItem(ADMIN_UNLOCK_KEY); void supabase.auth.signOut(); }, []);
+  return <main className="min-h-dvh bg-background px-5 py-12 grid place-items-center"><section className="w-full max-w-sm space-y-8"><p className="text-xl font-semibold text-primary">CYCY shop</p>{loading ? <p role="status" className="text-sm text-muted-foreground">Chargement…</p> : <AdminLogin />}</section></main>;
 }
 
 function AdminLogin() {
@@ -37,6 +40,7 @@ function AdminLogin() {
       if (error || !data.user) { toast.error(LOGIN_ERROR); return; }
       if (!(await checkManager(data.user.id))) { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); toast.error(LOGIN_ERROR); return; }
       setPassword('');
+      sessionStorage.setItem(ADMIN_UNLOCK_KEY, '1');
       window.location.replace('/gestion-cycy');
     } catch { toast.error(LOGIN_ERROR); }
     finally { setBusy(false); setCaptchaToken(''); setCaptchaVersion((v) => v + 1); }
@@ -44,7 +48,3 @@ function AdminLogin() {
   return <div><h1 className="text-2xl font-semibold">Connexion administrateur</h1><form className="form-stack" onSubmit={submit}><label>E-mail<Input type="email" required autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} /></label><label>Mot de passe<Input type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} /></label>{config.data?.siteKey && <Turnstile key={captchaVersion} siteKey={config.data.siteKey} onToken={setCaptchaToken} />}<Button type="submit" disabled={busy || config.isPending || config.isError || (!!config.data?.siteKey && !captchaToken)}>{busy ? 'Connexion…' : 'Se connecter'}</Button></form></div>;
 }
 
-function OpenAdmin() {
-  useEffect(() => { window.location.replace('/gestion-cycy'); }, []);
-  return <p role="status" className="text-sm text-muted-foreground">Ouverture de l’administration…</p>;
-}
