@@ -1,3 +1,5 @@
+import { synchronizeScriptNonces } from '@/lib/csp-html';
+
 export const isAdminRequest = (path: string) => path === '/admin' || path.startsWith('/admin/') || path === '/gestion-cycy' || path.startsWith('/gestion-cycy/');
 
 /** A per-request nonce permits hydration without allowing arbitrary inline JavaScript. */
@@ -13,7 +15,12 @@ export async function secureResponse(request: Request, response: Response, nonce
   if (url.pathname === '/compte') headers.set('Cache-Control', 'no-store');
   if (!headers.get('Content-Type')?.includes('text/html')) return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 
-  const html = nonce ? null : await response.text();
+  // Finish the SSR stream before assigning CSP so early/late bootstrap scripts
+  // and preview entry scripts all receive the same nonce as the response header.
+  const source = await response.text();
+  const html = nonce ? synchronizeScriptNonces(source, nonce) : source;
+  // A cached document must never be combined with a different request's CSP nonce.
+  headers.set('Cache-Control', 'no-store');
   const hashes = new Set<string>();
   for (const match of (html ?? '').matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
     const attributes = match[1] ?? ''; const body = match[2] ?? '';
@@ -38,5 +45,5 @@ export async function secureResponse(request: Request, response: Response, nonce
     ...(localDevelopment ? [] : ['upgrade-insecure-requests']),
   ].join('; '));
   headers.delete('Content-Length');
-  return new Response(html ?? response.body, { status: response.status, statusText: response.statusText, headers });
+  return new Response(html, { status: response.status, statusText: response.statusText, headers });
 }

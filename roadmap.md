@@ -1,5 +1,7 @@
 # Plateforme e-commerce premium
 
+- [x] Corriger l’écran blanc au démarrage : scripts et CSP synchronisés, réponses HTML non mises en cache ; chargements répétés, panier et connexion vérifiés à 822 et 390 pixels, aucune erreur de démarrage ni violation CSP ; 23 tests réussis.
+
 - [x] Sécuriser les actions et lectures administrateur côté serveur, imposer TOTP et expiration à sept jours, journaliser les changements et préserver la commande invitée.
 - [x] Déplacer l’administration vers /gestion-cycy, ajouter les en-têtes de sécurité et vérifier les écrans et refus.
 - [ ] Activer et vérifier Turnstile : attend une vraie Site Key ; la valeur reçue n’est pas une clé publique et n’a pas été utilisée. La clé secrète est stockée mais n’a pas été validée avec le widget.

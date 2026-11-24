@@ -51,4 +51,5 @@ use the editor.
 - Public image signing first selects eligible paths through anonymous RLS, then uses privileged storage signing only for those paths; requiring a manager for storefront images would break guest shopping.
 - Password login uses a durable atomic server limiter, generic failures and real Turnstile verification when configured; never trust caller-controlled forwarding headers for IP limits, and never pretend the app limiter protects the directly reachable hosted Auth endpoint.
 - The server entry applies security headers and supplies the router with a fresh request nonce for CSP rather than allowing arbitrary inline JavaScript; private administration pages deny framing while public pages remain previewable.
+- Final HTML responses synchronize script nonces with CSP using parser source offsets and disable document caching; preserve hydration script bytes so preview/bootstrap scripts cannot be blocked by a stale or missing nonce.
 <!-- AGENT-MEMORY:END -->
