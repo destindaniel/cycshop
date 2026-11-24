@@ -58,6 +58,24 @@ export type Database = {
           },
         ]
       }
+      admin_mfa_enforcement: {
+        Row: {
+          activated_at: string
+          factor_id: string | null
+          user_id: string
+        }
+        Insert: {
+          activated_at?: string
+          factor_id?: string | null
+          user_id: string
+        }
+        Update: {
+          activated_at?: string
+          factor_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
@@ -391,6 +409,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      activate_admin_mfa: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

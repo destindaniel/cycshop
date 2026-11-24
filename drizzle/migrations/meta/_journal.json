@@ -64,6 +64,20 @@
       "when": 1795178164265,
       "tag": "0008_lock_product_images_and_role_check",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1795517076935,
+      "tag": "0009_prepare_sticky_admin_mfa",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1795517367486,
+      "tag": "0010_bind_admin_mfa_to_confirmed_phone",
+      "breakpoints": true
     }
   ]
 }
