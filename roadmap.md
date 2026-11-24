@@ -1,5 +1,9 @@
 # Plateforme e-commerce premium
 
+- [ ] Sécuriser les actions et lectures administrateur côté serveur, imposer TOTP et expiration à sept jours, journaliser les changements et préserver la commande invitée.
+- [ ] Déplacer l’administration vers /gestion-cycy, ajouter les en-têtes de sécurité et vérifier les écrans et refus.
+- [ ] Protéger la connexion par Turnstile et cinq tentatives en quinze minutes : attend les clés Turnstile pour activation et validation réelle.
+
 - [x] Préparer le parcours de double vérification, retirer les liens administrateur publics et renforcer les paramètres de mots de passe ; accès privé et refus côté données/fichiers vérifiés, seize tests réussis.
 - [ ] Publier puis activer la double vérification de la gestionnaire et vérifier le parcours autorisé complet : attend son association de téléphone et un premier code réel ; la session temporaire de test n’a pas de session d’authentification enregistrée et ne permet pas de tester l’association native.
 - [ ] Proposer un accès administrateur séparé et une protection anti-DDoS : pas de domaine détenu ; achat ou connexion d’un domaine et choix du service de protection nécessaires avant activation.
