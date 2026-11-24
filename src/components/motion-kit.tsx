@@ -4,10 +4,10 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 const ease = [0.22, 1, 0.36, 1] as const;
 
 /** Fades and lifts content in once it scrolls into view. */
-export function Reveal({ children, delay = 0, y = 28, ...rest }: { children: ReactNode; delay?: number; y?: number } & HTMLMotionProps<'div'>) {
+export function Reveal({ children, delay = 0, y = 16, ...rest }: { children: ReactNode; delay?: number; y?: number } & HTMLMotionProps<'div'>) {
   const reduce = useReducedMotion();
   return (
-    <motion.div initial={reduce ? false : { opacity: 0, y }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.65, ease, delay }} {...rest}>
+    <motion.div initial={reduce ? false : { opacity: 0, transform: `translateY(${y}px)` }} whileInView={{ opacity: 1, transform: 'translateY(0px)' }} viewport={{ once: true, margin: '-24px' }} transition={{ duration: 0.4, ease, delay }} {...rest}>
       {children}
     </motion.div>
   );
@@ -16,7 +16,7 @@ export function Reveal({ children, delay = 0, y = 28, ...rest }: { children: Rea
 /** Staggers its direct StaggerItem children. */
 export function Stagger({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <motion.div className={className} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-60px' }} variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}>
+    <motion.div className={className} initial="hidden" whileInView="show" viewport={{ once: true, margin: '-24px' }} variants={{ hidden: {}, show: { transition: { staggerChildren: 0.055 } } }}>
       {children}
     </motion.div>
   );
@@ -25,7 +25,7 @@ export function Stagger({ children, className }: { children: ReactNode; classNam
 export function StaggerItem({ children, className }: { children: ReactNode; className?: string }) {
   const reduce = useReducedMotion();
   return (
-    <motion.div className={className} variants={reduce ? {} : { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease } } }}>
+    <motion.div className={className} variants={reduce ? {} : { hidden: { opacity: 0, transform: 'translateY(16px)' }, show: { opacity: 1, transform: 'translateY(0px)', transition: { duration: 0.4, ease } } }}>
       {children}
     </motion.div>
   );
@@ -43,7 +43,7 @@ export function useScrolled(threshold = 12) {
   return scrolled;
 }
 
-/** GSAP intro timeline + scroll parallax for the hero; loaded in the browser only. */
+/** One restrained intro; no continuous scroll work or moving text. */
 export function useHeroMotion() {
   const ref = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -51,16 +51,13 @@ export function useHeroMotion() {
     if (!root || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let cleanup = () => {};
     let cancelled = false;
-    void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
+    void import('gsap').then(({ gsap }) => {
       if (cancelled) return;
-      gsap.registerPlugin(ScrollTrigger);
       const ctx = gsap.context(() => {
         gsap.timeline({ defaults: { ease: 'expo.out' } })
-          .fromTo('.hero-image', { scale: 1.08 }, { scale: 1.04, duration: 1.5 })
-          .fromTo('.hero-line', { yPercent: 110 }, { yPercent: 0, duration: 0.9, stagger: 0.1 }, 0.25)
-          .fromTo('.hero-fade', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.08 }, 0.25);
-        gsap.to('.hero-image', { yPercent: 12, ease: 'none', scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } });
-        // Keep text stable and readable while the image provides subtle depth.
+          .fromTo('.hero-image', { scale: 1.025 }, { scale: 1, duration: 1 })
+          .fromTo('.hero-line', { yPercent: 100 }, { yPercent: 0, duration: 0.65 }, 0.1)
+          .fromTo('.hero-fade', { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.05 }, 0.15);
       }, root);
       cleanup = () => ctx.revert();
     });

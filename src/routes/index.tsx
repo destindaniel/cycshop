@@ -30,7 +30,7 @@ function Index() {
         <div className="wrap hero-content">
           <p className="eyebrow hero-fade">La boutique · Brazzaville</p>
           <h1><span className="line-mask"><span className="hero-line">CYCY <em>shop.</em></span></span></h1>
-          <p className="hero-subtitle hero-fade">L’art de choisir.<br /><em>Le plaisir de trouver.</em></p>
+           <p className="hero-subtitle hero-fade">Vos envies.<br /><em>Notre signature.</em></p>
           <p className="hero-description hero-fade">La mode, la beauté, la technologie.<br />Vos envies ont trouvé leur adresse.</p>
           <div className="hero-buttons hero-fade">
             <Button asChild size="lg" className="btn-lux"><Link to="/boutique">Explorer la boutique<ArrowUpRight aria-hidden /></Link></Button>
@@ -46,12 +46,12 @@ function Index() {
       </section>
 
       <section className="wrap section univers-section">
-        <Reveal className="section-heading"><div><p className="overline">01 / Les univers</p><h2>À chaque envie,<br /><em>son univers.</em></h2></div><Link to="/categories" className="link-lux">Tout explorer<ArrowRight size={14} /></Link></Reveal>
+         <Reveal className="section-heading"><div><p className="overline">01 / Les univers CYCY</p><h2>À chacun <em>son univers.</em></h2></div><Link to="/categories" className="link-lux">Tout explorer<ArrowRight size={14} /></Link></Reveal>
         <CategoryGrid />
       </section>
 
       <section className="selection-section"><div className="wrap section">
-        <Reveal className="section-heading"><div><p className="overline">02 / La sélection</p><h2>À découvrir.<br /><em>À aimer.</em></h2></div><Link to="/boutique" className="link-lux">Voir la boutique<ArrowRight size={14} /></Link></Reveal>
+         <Reveal className="section-heading"><div><p className="overline">02 / La sélection</p><h2>La sélection <em>CYCY.</em></h2></div><Link to="/boutique" className="link-lux">Voir la boutique<ArrowRight size={14} /></Link></Reveal>
         {picks.length ? (
           <Stagger className="product-grid">{picks.map((p) => <StaggerItem key={p.id}><ProductCard product={p} /></StaggerItem>)}</Stagger>
         ) : (

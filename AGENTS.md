@@ -38,7 +38,8 @@ use the editor.
 - /admin uses ssr:false with a beforeLoad role check through canEnterAdmin (src/lib/admin-access.ts); the dashboard re-checks it, and RLS enforces every write.
 - has_role must stay non-executable by anon: keep anon and authenticated select policies separate so anonymous reads never call it.
 - Storefront categories come live from the categories table (publicCategoriesQuery); image_url holds a storage path, with bundled editorial images as fallback for the original slugs.
-- Animations: Motion for scroll reveals (src/components/motion-kit.tsx), GSAP loaded dynamically in useEffect for the hero only; all respect reduced motion so SSR stays safe and pages stay fast.
+- Animations: Motion uses transform/opacity for short one-time scroll reveals; GSAP is dynamically loaded for the hero intro only, without ScrollTrigger or continuous parallax, to keep shopping interactions immediate; all respect reduced motion.
 - Recover missing route bundles in the root error boundary with one session-scoped reload per minute; preserve manual retry to avoid offline reload loops.
 - Keep the editorial storefront direction in the shared stylesheet and Button variants, with the responsive masthead in StoreShell and live category mosaics in CategoryGrid; preserve catalog queries and admin authorization so visual work cannot change commerce permissions.
+- StoreShell menu and cart use a shared right-side Dialog drawer with Radix focus management; close on navigation rather than arbitrary content clicks to preserve typing and keyboard access.
 <!-- AGENT-MEMORY:END -->

@@ -1,5 +1,7 @@
 # Plateforme e-commerce premium
 
+- [x] Affiner la boutique avec le nouveau guide : navigation compacte, catégories lisibles, panier latéral et interactions rapides ; parcours publics vérifiés à 1440, 822 et 390 px, réduction de mouvement et neuf tests réussis.
+
 - [x] Refaire visiblement la direction éditoriale selon le guide fourni : nouvelle photo d’accueil, navigation, typographie, mosaïque de catégories et présentation du catalogue ; parcours publics vérifiés sur cinq tailles d’écran, photos chargées et neuf tests réussis, accès inchangés.
 
 - [x] Affiner le design à partir du guide UI/UX fourni : accueil, navigation, catégories, catalogue et formulaires ; vérifié à 1440, 822, 390 et 375 px, avec réduction de mouvement, sans modifier les données ni les accès.
