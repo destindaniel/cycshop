@@ -50,7 +50,7 @@ export function AdminMfa() {
     await activateAdminMfa();
     await queryClient.cancelQueries();
     queryClient.clear();
-    await navigate({ to: '/admin/dashboard', replace: true });
+    await navigate({ to: '/gestion-cycy', replace: true });
   };
 
   const verify = async (event: React.FormEvent) => {

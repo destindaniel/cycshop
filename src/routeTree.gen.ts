@@ -16,6 +16,7 @@ import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as CommandeRouteImport } from './routes/commande'
 import { Route as CompteRouteImport } from './routes/compte'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as GestionCycyRouteImport } from './routes/gestion-cycy'
 import { Route as InformationsRouteImport } from './routes/informations'
 import { Route as PromotionsRouteImport } from './routes/promotions'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -59,6 +60,11 @@ const CompteRoute = CompteRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GestionCycyRoute = GestionCycyRouteImport.update({
+  id: '/gestion-cycy',
+  path: '/gestion-cycy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InformationsRoute = InformationsRouteImport.update({
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/commande': typeof CommandeRoute
   '/compte': typeof CompteRoute
   '/contact': typeof ContactRoute
+  '/gestion-cycy': typeof GestionCycyRoute
   '/informations': typeof InformationsRoute
   '/promotions': typeof PromotionsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/commande': typeof CommandeRoute
   '/compte': typeof CompteRoute
   '/contact': typeof ContactRoute
+  '/gestion-cycy': typeof GestionCycyRoute
   '/informations': typeof InformationsRoute
   '/promotions': typeof PromotionsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/commande': typeof CommandeRoute
   '/compte': typeof CompteRoute
   '/contact': typeof ContactRoute
+  '/gestion-cycy': typeof GestionCycyRoute
   '/informations': typeof InformationsRoute
   '/promotions': typeof PromotionsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/commande'
     | '/compte'
     | '/contact'
+    | '/gestion-cycy'
     | '/informations'
     | '/promotions'
     | '/reset-password'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/commande'
     | '/compte'
     | '/contact'
+    | '/gestion-cycy'
     | '/informations'
     | '/promotions'
     | '/reset-password'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/commande'
     | '/compte'
     | '/contact'
+    | '/gestion-cycy'
     | '/informations'
     | '/promotions'
     | '/reset-password'
@@ -223,6 +235,7 @@ export interface RootRouteChildren {
   CommandeRoute: typeof CommandeRoute
   CompteRoute: typeof CompteRoute
   ContactRoute: typeof ContactRoute
+  GestionCycyRoute: typeof GestionCycyRoute
   InformationsRoute: typeof InformationsRoute
   PromotionsRoute: typeof PromotionsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -278,6 +291,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gestion-cycy': {
+      id: '/gestion-cycy'
+      path: '/gestion-cycy'
+      fullPath: '/gestion-cycy'
+      preLoaderRoute: typeof GestionCycyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/informations': {
@@ -382,6 +402,7 @@ const rootRouteChildren: RootRouteChildren = {
   CommandeRoute: CommandeRoute,
   CompteRoute: CompteRoute,
   ContactRoute: ContactRoute,
+  GestionCycyRoute: GestionCycyRoute,
   InformationsRoute: InformationsRoute,
   PromotionsRoute: PromotionsRoute,
   ResetPasswordRoute: ResetPasswordRoute,

@@ -16,7 +16,7 @@ export function StoreShell({ children }: { children: ReactNode }) {
   const cart = useCart();
   const scrolled = useScrolled();
   const { data: products = [] } = useQuery(productsQuery);
-  if (path.startsWith('/admin') || path === '/compte') return <>{children}</>;
+  if (path.startsWith('/admin') || path.startsWith('/gestion-cycy') || path === '/compte') return <>{children}</>;
   const lines = cart.lines.flatMap((l) => { const p = products.find((x) => x.id === l.productId); return p ? [{ ...l, product: p, price: p.price }] : []; });
   const totals = computeTotals(lines);
   const nav = <><Link to="/" className={path === '/' ? 'active' : ''}>Accueil</Link><Link to="/boutique" className={path === '/boutique' ? 'active' : ''}>Boutique</Link><Link to="/categories" className={path.startsWith('/categories') ? 'active' : ''}>Catégories</Link><Link to="/promotions" className={path === '/promotions' ? 'active' : ''}>Promotions</Link><Link to="/contact" className={path === '/contact' ? 'active' : ''}>Contact</Link></>;

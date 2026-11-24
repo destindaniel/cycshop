@@ -58,6 +58,51 @@ export type Database = {
           },
         ]
       }
+      admin_audit_log: {
+        Row: {
+          created_at: string
+          id: string
+          operation: string
+          record_id: string | null
+          resource: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          operation: string
+          record_id?: string | null
+          resource: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          operation?: string
+          record_id?: string | null
+          resource?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      admin_login_windows: {
+        Row: {
+          attempts: number
+          ip_hash: string
+          window_started_at: string
+        }
+        Insert: {
+          attempts?: number
+          ip_hash: string
+          window_started_at?: string
+        }
+        Update: {
+          attempts?: number
+          ip_hash?: string
+          window_started_at?: string
+        }
+        Relationships: []
+      }
       admin_mfa_enforcement: {
         Row: {
           activated_at: string
@@ -410,6 +455,10 @@ export type Database = {
     }
     Functions: {
       activate_admin_mfa: { Args: never; Returns: boolean }
+      consume_admin_login_attempt: {
+        Args: { _ip_hash: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -429,6 +478,10 @@ export type Database = {
           _promo_code: string
         }
         Returns: string
+      }
+      record_admin_image_action: {
+        Args: { _operation: string; _path: string }
+        Returns: undefined
       }
     }
     Enums: {

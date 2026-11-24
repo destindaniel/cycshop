@@ -78,6 +78,13 @@
       "when": 1795517367486,
       "tag": "0010_bind_admin_mfa_to_confirmed_phone",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1795518318621,
+      "tag": "0011_server_admin_security_audit_and_guest_checkout",
+      "breakpoints": true
     }
   ]
 }
