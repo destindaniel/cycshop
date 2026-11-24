@@ -35,9 +35,8 @@ use the editor.
 - Roles live in user_roles checked via has_role; the manager role is granted only by a DB trigger on the confirmed owner email.
 - Orders go through the place_order SQL function so prices are frozen and stock is decremented atomically; payment is cash on delivery until a real gateway exists.
 - products-images is a private bucket (public buckets are blocked); store paths and display via signed URLs.
-- The private administration uses a client-only route gate plus an authenticated server snapshot per screen; server mutations revalidate the user, has_role, pinned TOTP and session age, with RLS as the final boundary, because neither a hidden path nor a client gate authorizes an RPC.
-- Activate sticky admin MFA only after native TOTP verification through activate_admin_mfa; has_role requires aal2 and the session's pinned verified factor for activated managers, and browser clients cannot reset or rebind activation, preventing factor removal or new enrollment from restoring password-only access.
-- Use own user_roles reads for pre-MFA manager identity and has_role for privileged authorization; this lets managers reach the verification form without granting pre-MFA management rights after activation.
+- The private administration uses a client-only route gate plus an authenticated server snapshot per screen; server mutations revalidate the user and has_role, with RLS as the final boundary, because neither a hidden path nor a client gate authorizes an RPC.
+- Manager access is email + password only (owner chose no TOTP); has_role checks only the caller's own user_roles row.
 - Keep the private /compte login outside the storefront shell with no public navigation links and noindex metadata; a separate protected domain needs independent origin-bypass verification before it can be called isolated.
 - has_role must stay non-executable by anon: keep anon and authenticated select policies separate so anonymous reads never call it.
 - Storefront categories come live from the categories table (publicCategoriesQuery); image_url holds a storage path, with bundled editorial images as fallback for the original slugs.

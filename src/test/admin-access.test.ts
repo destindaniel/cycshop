@@ -12,9 +12,9 @@ describe("Admin access", () => {
     expect(canEnterAdmin({ hasSession: false, isManager: false, assuranceLevel: 'aal2' })).toBe(false);
     expect(canEnterAdmin({ hasSession: false, isManager: true, assuranceLevel: 'aal2' })).toBe(false);
   });
-  it("rejects a manager without a second factor even when signed in", () => {
-    expect(canEnterAdmin({ hasSession: true, isManager: true, assuranceLevel: 'aal1' })).toBe(false);
-    expect(canEnterAdmin({ hasSession: true, isManager: true, assuranceLevel: null })).toBe(false);
+  it("admits the signed-in manager with password only", () => {
+    expect(canEnterAdmin({ hasSession: true, isManager: true, assuranceLevel: 'aal1' })).toBe(true);
+    expect(canEnterAdmin({ hasSession: true, isManager: true, assuranceLevel: null })).toBe(true);
   });
   it("accepts exactly six digits for a TOTP code", () => {
     expect(isTotpCode('123456')).toBe(true);

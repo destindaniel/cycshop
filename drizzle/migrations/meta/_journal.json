@@ -113,6 +113,13 @@
       "when": 1795521697506,
       "tag": "0015_block_manager_self_benefit_orders",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1795522205837,
+      "tag": "0016_password_only_manager_access",
+      "breakpoints": true
     }
   ]
 }
