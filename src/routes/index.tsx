@@ -10,7 +10,7 @@ import { productsQuery, publicCategoriesQuery } from '@/lib/shop-data';
 import hero from '@/assets/cycy-hero.webp.asset.json';
 import accessories from '@/assets/cycy-accessoires.webp.asset.json';
 
-export const Route = createFileRoute('/')({ head: () => pageHead('Le style et la qualité, à portée de clic', 'Découvrez CYCY shop à Brazzaville : électronique, vêtements, chaussures et accessoires dans un univers chocolat et crème.'), component: Index });
+export const Route = createFileRoute('/')({ head: () => ({ meta: [...pageHead('Votre boutique à Brazzaville', 'Découvrez les univers de CYCY shop : mode, électronique, beauté et accessoires à Brazzaville.').meta, { property: 'og:image', content: hero.url }, { name: 'twitter:image', content: hero.url }] }), component: Index });
 
 const benefits = [
   { icon: Truck, title: 'À vos côtés à Brazzaville', text: 'Livraison et paiement à la réception' },
@@ -29,16 +29,16 @@ function Index() {
         <img className="hero-image" src={hero.url} alt="Sélection élégante de sac chocolat, casque audio, sneakers et accessoires crème" fetchPriority="high" />
         <div className="hero-veil" aria-hidden />
         <div className="wrap hero-content">
-          <div className="eyebrow hero-fade">CYCY shop · L’essentiel, autrement</div>
-          <h1><span className="line-mask"><span className="hero-line">Le style et la qualité,</span></span><span className="line-mask"><em className="hero-line">à portée de clic.</em></span></h1>
-          <p className="hero-description hero-fade">Les pièces que vous aimez. La qualité que vous méritez. Un univers pensé pour votre quotidien.</p>
+          <div className="eyebrow hero-fade">Brazzaville · L’essentiel, autrement</div>
+          <h1><span className="line-mask"><span className="hero-line">CYCY <em>shop.</em></span></span></h1>
+          <p className="hero-subtitle hero-fade">Le style. La qualité.<br />Vos envies, réunies.</p>
+          <p className="hero-description hero-fade">Mode, technologie et petits coups de cœur : des essentiels choisis pour votre quotidien.</p>
           <div className="hero-buttons hero-fade">
             <Button asChild size="lg" className="btn-lux"><Link to="/boutique">Découvrir la boutique<ArrowRight /></Link></Button>
-            <Button asChild size="lg" variant="outline" className="btn-ghost-lux"><Link to="/promotions">Voir les promotions</Link></Button>
+            <Button asChild size="lg" variant="link" className="hero-secondary"><Link to="/categories">Explorer les univers<ArrowRight aria-hidden /></Link></Button>
           </div>
-          <div className="hero-note hero-fade"><Sparkles size={13} /> Mode, technologie & petits coups de cœur.</div>
+          <div className="hero-note hero-fade"><Truck size={16} aria-hidden /> Paiement à la livraison à Brazzaville</div>
         </div>
-        <div className="hero-index">01 / 01</div>
         <div className="hero-caption">Une sélection. Mille envies.</div>
       </section>
 
@@ -49,11 +49,11 @@ function Index() {
       </section>
 
       <section className="wrap section">
-        <Reveal className="section-heading"><div><p className="overline">À chaque envie, son univers</p><h2>Explorez nos catégories</h2></div><Link to="/categories" className="link-lux">Tout explorer<ArrowRight size={14} /></Link></Reveal>
+        <Reveal className="section-heading"><div><p className="overline">À chaque envie, son univers</p><h2>Les univers CYCY<span className="heading-dot">.</span></h2></div><Link to="/categories" className="link-lux">Tout explorer<ArrowRight size={14} /></Link></Reveal>
         <CategoryGrid />
       </section>
 
-      <section className="marquee" aria-hidden><div className="marquee-track">{Array.from({ length: 2 }).map((_, i) => <span key={i}>{(cats ?? []).map((c) => <>{c.name} <i>✦</i> </>)}Brazzaville <i>✦</i> </span>)}</div></section>
+      <section className="marquee" aria-hidden><div className="marquee-track">{Array.from({ length: 2 }).map((_, i) => <span key={i}>{(cats ?? []).map((c) => <span key={c.slug}>{c.name} <Sparkles size={18} /></span>)}Brazzaville <Sparkles size={18} /> </span>)}</div></section>
 
       <section className="wrap section">
         <Reveal className="section-heading"><div><p className="overline">La sélection CYCY</p><h2>Vos prochains coups de cœur</h2></div><Link to="/boutique" className="link-lux">Voir la boutique<ArrowRight size={14} /></Link></Reveal>

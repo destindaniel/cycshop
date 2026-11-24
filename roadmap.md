@@ -1,5 +1,7 @@
 # Plateforme e-commerce premium
 
+- [x] Affiner le design à partir du guide UI/UX fourni : accueil, navigation, catégories, catalogue et formulaires ; vérifié à 1440, 822, 390 et 375 px, avec réduction de mouvement, sans modifier les données ni les accès.
+
 - [ ] Configurer Shopify : création refusée ; attend une autorisation explicite.
 - [x] Confirmer le nom de la boutique : CYCY shop.
 - [x] Construire le design chocolat et crème et l’accueil avec des images professionnelles.

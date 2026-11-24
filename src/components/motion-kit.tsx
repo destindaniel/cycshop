@@ -7,7 +7,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 export function Reveal({ children, delay = 0, y = 28, ...rest }: { children: ReactNode; delay?: number; y?: number } & HTMLMotionProps<'div'>) {
   const reduce = useReducedMotion();
   return (
-    <motion.div initial={reduce ? false : { opacity: 0, y }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.9, ease, delay }} {...rest}>
+    <motion.div initial={reduce ? false : { opacity: 0, y }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.65, ease, delay }} {...rest}>
       {children}
     </motion.div>
   );
@@ -25,7 +25,7 @@ export function Stagger({ children, className }: { children: ReactNode; classNam
 export function StaggerItem({ children, className }: { children: ReactNode; className?: string }) {
   const reduce = useReducedMotion();
   return (
-    <motion.div className={className} variants={reduce ? {} : { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { duration: 0.8, ease } } }}>
+    <motion.div className={className} variants={reduce ? {} : { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease } } }}>
       {children}
     </motion.div>
   );
@@ -56,11 +56,11 @@ export function useHeroMotion() {
       gsap.registerPlugin(ScrollTrigger);
       const ctx = gsap.context(() => {
         gsap.timeline({ defaults: { ease: 'expo.out' } })
-          .fromTo('.hero-image', { scale: 1.14, opacity: 0 }, { scale: 1.04, opacity: 1, duration: 2.2 })
-          .fromTo('.hero-line', { yPercent: 110 }, { yPercent: 0, duration: 1.3, stagger: 0.12 }, 0.25)
-          .fromTo('.hero-fade', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 1, stagger: 0.1 }, 0.7);
+          .fromTo('.hero-image', { scale: 1.08 }, { scale: 1.04, duration: 1.5 })
+          .fromTo('.hero-line', { yPercent: 110 }, { yPercent: 0, duration: 0.9, stagger: 0.1 }, 0.25)
+          .fromTo('.hero-fade', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.08 }, 0.25);
         gsap.to('.hero-image', { yPercent: 12, ease: 'none', scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } });
-        gsap.to('.hero-content', { yPercent: -18, opacity: 0.2, ease: 'none', scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } });
+        // Keep text stable and readable while the image provides subtle depth.
       }, root);
       cleanup = () => ctx.revert();
     });

@@ -40,4 +40,5 @@ use the editor.
 - Storefront categories come live from the categories table (publicCategoriesQuery); image_url holds a storage path, with bundled editorial images as fallback for the original slugs.
 - Animations: Motion for scroll reveals (src/components/motion-kit.tsx), GSAP loaded dynamically in useEffect for the hero only; all respect reduced motion so SSR stays safe and pages stay fast.
 - Recover missing route bundles in the root error boundary with one session-scoped reload per minute; preserve manual retry to avoid offline reload loops.
+- Keep visual refinements in the shared stylesheet and Button variants; preserve live catalog queries and admin authorization so visual work cannot change commerce permissions.
 <!-- AGENT-MEMORY:END -->
